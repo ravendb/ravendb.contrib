@@ -1,0 +1,120 @@
+﻿using System;
+
+namespace Raven.Client.Contrib.Extensions
+{
+    public static class DocumentIdExtensions
+    {
+        /// <summary>
+        /// Gets the document key prefix for the given entity type.
+        /// </summary>
+        /// <typeparam name="T">The type of the entity.</typeparam>
+        /// <param name="documentStore">The Raven document store.</param>
+        /// <returns>The document key prefix string.</returns>
+        public static string GetDocumentKeyPrefix<T>(this IDocumentStore documentStore)
+        {
+            var conventions = documentStore.Conventions;
+            var name = conventions.GetTypeTagName(typeof(T));
+            return conventions.TransformTypeTagNameToDocumentKeyPrefix(name);
+        }
+
+        /// <summary>
+        /// Checks if the document id specified is valid for the given entity type.
+        /// </summary>
+        /// <typeparam name="T">The type of the entity.</typeparam>
+        /// <param name="documentStore">The Raven document store.</param>
+        /// <param name="id">The string document id.</param>
+        /// <returns>True if the id is valid, false otherwise.</returns>
+        public static bool DocumentIdMatches<T>(this IDocumentStore documentStore, string id)
+        {
+            var conventions = documentStore.Conventions;
+            var prefix = documentStore.GetDocumentKeyPrefix<T>();
+            return id.StartsWith(prefix + conventions.IdentityPartsSeparator);
+        }
+
+        /// <summary>
+        /// Gets a string id for an entity, given an integer id.
+        /// </summary>
+        /// <typeparam name="T">The type of the entity.</typeparam>
+        /// <param name="documentStore">The Raven document store.</param>
+        /// <param name="id">The integer id.</param>
+        /// <returns>The string id.</returns>
+        public static string GetStringIdFor<T>(this IDocumentStore documentStore, int id)
+        {
+            return documentStore.Conventions.FindFullDocumentKeyFromNonStringIdentifier(id, typeof(T), false);
+        }
+
+        /// <summary>
+        /// Gets a string id for an entity, given a guid id.
+        /// </summary>
+        /// <typeparam name="T">The type of the entity.</typeparam>
+        /// <param name="documentStore">The Raven document store.</param>
+        /// <param name="id">The guid id.</param>
+        /// <returns>The string id.</returns>
+        public static string GetStringIdFor<T>(this IDocumentStore documentStore, Guid id)
+        {
+            return documentStore.Conventions.FindFullDocumentKeyFromNonStringIdentifier(id, typeof(T), false);
+        }
+
+        /// <summary>
+        /// Safely gets the integer portion of a string identifier for a particular entity type.
+        /// </summary>
+        /// <typeparam name="T">The type of the entity.</typeparam>
+        /// <param name="documentStore">The Raven document store.</param>
+        /// <param name="id">The string id, such as foos/1.</param>
+        /// <returns>The integer id.</returns>
+        /// <exception cref="ArgumentException">Thrown if the inputs are not valid.</exception>
+        public static int GetIntegerIdFor<T>(this IDocumentStore documentStore, string id)
+        {
+            var separator = documentStore.Conventions.IdentityPartsSeparator;
+
+            var parts = id.Split(new[] { separator }, StringSplitOptions.None);
+            if (parts.Length != 2)
+                throw new ArgumentException(
+                    String.Format(@"The string id is not of the correct form: entity{0}integer.", separator),
+                    "id");
+
+            var prefix = documentStore.GetDocumentKeyPrefix<T>();
+            if (!prefix.Equals(parts[0], StringComparison.OrdinalIgnoreCase))
+                throw new ArgumentException(
+                    String.Format("The string id has a prefix of {0} which is not valid for the {1} entity.", prefix, typeof(T).Name),
+                    "id");
+
+            int intId;
+            if (!Int32.TryParse(parts[1], out intId))
+                throw new ArgumentException(@"The second part of the id is not a valid integer.", "id");
+
+            return intId;
+        }
+
+        /// <summary>
+        /// Safely gets the guid portion of a string identifier for a particular entity type, when guid ids are used.
+        /// </summary>
+        /// <typeparam name="T">The type of the entity.</typeparam>
+        /// <param name="documentStore">The Raven document store.</param>
+        /// <param name="id">The string id, such as foos/d2dbfef3-a42e-4ab8-aa17-19a87da0358b.</param>
+        /// <returns>The guid id.</returns>
+        /// <exception cref="ArgumentException">Thrown if the inputs are not valid.</exception>
+        public static Guid GetGuidIdFor<T>(this IDocumentStore documentStore, string id)
+        {
+            var separator = documentStore.Conventions.IdentityPartsSeparator;
+
+            var parts = id.Split(new[] { separator }, StringSplitOptions.None);
+            if (parts.Length != 2)
+                throw new ArgumentException(
+                    String.Format(@"The string id is not of the correct form: entity{0}guid.", separator),
+                    "id");
+
+            var prefix = documentStore.GetDocumentKeyPrefix<T>();
+            if (!prefix.Equals(parts[0], StringComparison.OrdinalIgnoreCase))
+                throw new ArgumentException(
+                    String.Format("The string id has a prefix of {0} which is not valid for the {1} entity.", prefix, typeof(T).Name),
+                    "id");
+
+            Guid guidId;
+            if (!Guid.TryParse(parts[1], out guidId))
+                throw new ArgumentException(@"The second part of the id is not a valid guid.", "id");
+
+            return guidId;
+        }
+    }
+}
