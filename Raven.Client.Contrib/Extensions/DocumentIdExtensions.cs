@@ -65,12 +65,11 @@ namespace Raven.Client.Contrib.Extensions
         /// <exception cref="ArgumentException">Thrown if the inputs are not valid.</exception>
         public static int GetIntegerIdFor<T>(this IDocumentStore documentStore, string id)
         {
-            var separator = documentStore.Conventions.IdentityPartsSeparator;
-
-            var parts = id.Split(new[] { separator }, StringSplitOptions.None);
-            if (parts.Length != 2)
+            var parts = documentStore.GetDocumentIdParts(id);
+            if (parts.Length < 2)
                 throw new ArgumentException(
-                    String.Format(@"The string id is not of the correct form: entity{0}integer.", separator),
+                    String.Format(@"The string id is not of the correct form: entity{0}integer.",
+                                  documentStore.Conventions.IdentityPartsSeparator),
                     "id");
 
             var prefix = documentStore.GetDocumentKeyPrefix<T>();
@@ -96,12 +95,11 @@ namespace Raven.Client.Contrib.Extensions
         /// <exception cref="ArgumentException">Thrown if the inputs are not valid.</exception>
         public static Guid GetGuidIdFor<T>(this IDocumentStore documentStore, string id)
         {
-            var separator = documentStore.Conventions.IdentityPartsSeparator;
-
-            var parts = id.Split(new[] { separator }, StringSplitOptions.None);
-            if (parts.Length != 2)
+            var parts = documentStore.GetDocumentIdParts(id);
+            if (parts.Length < 2)
                 throw new ArgumentException(
-                    String.Format(@"The string id is not of the correct form: entity{0}guid.", separator),
+                    String.Format(@"The string id is not of the correct form: entity{0}guid.",
+                                  documentStore.Conventions.IdentityPartsSeparator),
                     "id");
 
             var prefix = documentStore.GetDocumentKeyPrefix<T>();
@@ -115,6 +113,18 @@ namespace Raven.Client.Contrib.Extensions
                 throw new ArgumentException(@"The second part of the id is not a valid guid.", "id");
 
             return guidId;
+        }
+
+        /// <summary>
+        /// Splits a composite document id into its parts for easy consumption.
+        /// </summary>
+        /// <param name="documentStore">The Raven document store.</param>
+        /// <param name="id">The string id, such as foos/1/bar/2/whatever.</param>
+        /// <returns>An array of strings with each part as a separate element.</returns>
+        public static string[] GetDocumentIdParts(this IDocumentStore documentStore, string id)
+        {
+            var separator = documentStore.Conventions.IdentityPartsSeparator;
+            return id.Split(new[] { separator }, StringSplitOptions.None);
         }
     }
 }
