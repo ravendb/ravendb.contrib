@@ -16,6 +16,8 @@ namespace Raven.Client.Contrib.Extensions
             var total = 0;
             var page = 0;
 
+            var session = ((RavenQueryInspector<T>)queryable).Session;
+
             queryable = queryable.SyncCutoff();
 
             while (true)
@@ -36,6 +38,7 @@ namespace Raven.Client.Contrib.Extensions
                 if (total + skipped >= stats.TotalResults)
                     break;
 
+                session.MaxNumberOfRequestsPerSession++;
                 page++;
             }
         }
@@ -72,6 +75,7 @@ namespace Raven.Client.Contrib.Extensions
                 if (total + skipped >= stats.TotalResults)
                     break;
 
+                session.MaxNumberOfRequestsPerSession++;
                 page++;
             }
         }
@@ -84,6 +88,8 @@ namespace Raven.Client.Contrib.Extensions
             var skipped = 0;
             var total = 0;
             var page = 0;
+
+            var session = ((RavenQueryInspector<T>)queryable).Session;
 
             queryable = queryable.SyncCutoff();
 
@@ -106,6 +112,7 @@ namespace Raven.Client.Contrib.Extensions
                 if (total + skipped >= stats.TotalResults)
                     break;
 
+                session.MaxNumberOfRequestsPerSession++;
                 page++;
             }
         }
