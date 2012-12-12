@@ -9,7 +9,7 @@ namespace Raven.Client.Contrib.Tests.ExtensionTests
     public class PagingExtensionTests : RavenTestBase
     {
         [Fact]
-        public void GetAllResultsWithPaging_Expands_Request_Limit()
+        public void GetAllResultsWithPaging_Can_Expand_To_Exceed_Request_Limit()
         {
             using (var documentStore = NewDocumentStore())
             {
@@ -27,7 +27,7 @@ namespace Raven.Client.Contrib.Tests.ExtensionTests
 
                     var allBalls = session.Query<Ball>()
                                           .Customize(x => x.WaitForNonStaleResults())
-                                          .GetAllResultsWithPaging(pageSize: 25)
+                                          .GetAllResultsWithPaging(pageSize: 25, expandSessionRequestLimitAsNeededWhichMightBeDangerous: true)
                                           .ToList();
 
                     Assert.Equal(1000, allBalls.Count);
