@@ -4,14 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{AA6FAC9A-000D-4A61-9B76-479EB4D769AD}</ProjectGuid>
+    <ProjectGuid>{D3FE3CF5-DC6A-49DF-9F31-A4A74101FEAD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Raven.Client.Contrib</RootNamespace>
-    <AssemblyName>Raven.Client.Contrib</AssemblyName>
+    <RootNamespace>Raven.Client.Contrib.Profiling</RootNamespace>
+    <AssemblyName>Raven.Client.Contrib.Profiling</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
@@ -33,7 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="MiniProfiler">
       <HintPath>..\packages\MiniProfiler.2.0.2\lib\net40\MiniProfiler.dll</HintPath>
     </Reference>
@@ -46,15 +44,16 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions\AdvancedSessionExtensions.cs" />
-    <Compile Include="Extensions\DocumentExtensions.cs" />
-    <Compile Include="Extensions\DocumentIdExtensions.cs" />
-    <Compile Include="Extensions\PagingExtensions.cs" />
-    <Compile Include="Extensions\TenantDatabaseExtensions.cs" />
+    <Compile Include="JsonFormatter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Extensions\QueryExtensions.cs" />
+    <Compile Include="RavenProfiler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
