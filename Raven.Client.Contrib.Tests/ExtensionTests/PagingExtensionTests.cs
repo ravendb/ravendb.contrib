@@ -6,6 +6,8 @@ using Xunit;
 
 namespace Raven.Client.Contrib.Tests.ExtensionTests
 {
+    // ReSharper disable InconsistentNaming
+
     public class PagingExtensionTests : RavenTestBase
     {
         [Fact]
@@ -43,4 +45,6 @@ namespace Raven.Client.Contrib.Tests.ExtensionTests
             }
         }
     }
+
+    // ReSharper restore InconsistentNaming
 }

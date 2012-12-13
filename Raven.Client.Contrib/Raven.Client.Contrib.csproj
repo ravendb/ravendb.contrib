@@ -34,7 +34,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Raven.Abstractions">
+    <Reference Include="Raven.Abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=37f41c7f99471593, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\RavenDB.Client.2.0.2170-Unstable\lib\net40\Raven.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Raven.Client.Lightweight">
@@ -48,6 +49,7 @@
     <Compile Include="Extensions\AdvancedSessionExtensions.cs" />
     <Compile Include="Extensions\DocumentExtensions.cs" />
     <Compile Include="Extensions\DocumentIdExtensions.cs" />
+    <Compile Include="Extensions\DocumentStoreExtensions.cs" />
     <Compile Include="Extensions\PagingExtensions.cs" />
     <Compile Include="Extensions\TenantDatabaseExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

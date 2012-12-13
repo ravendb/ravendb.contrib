@@ -102,15 +102,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExtensionTests\DocumentStoreExtensionFacts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ExtensionTests\PagingExtensionTests.cs" />
     <Compile Include="TestEntities\Ball.cs" />
     <Compile Include="ToDo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Raven.Client.Contrib.Tests.Helpers\Raven.Client.Contrib.Tests.Helpers.csproj">
+      <Project>{8b4efe72-bdd3-46a7-af66-e0f0e2b95cbe}</Project>
+      <Name>Raven.Client.Contrib.Tests.Helpers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Raven.Client.Contrib\Raven.Client.Contrib.csproj">
       <Project>{aa6fac9a-000d-4a61-9b76-479eb4d769ad}</Project>
       <Name>Raven.Client.Contrib</Name>
