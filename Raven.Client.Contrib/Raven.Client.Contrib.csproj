@@ -34,6 +34,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="MiniProfiler">
+      <HintPath>..\packages\MiniProfiler.2.0.2\lib\net40\MiniProfiler.dll</HintPath>
+    </Reference>
     <Reference Include="Raven.Abstractions">
       <HintPath>..\packages\RavenDB.Client.2.0.2170-Unstable\lib\net40\Raven.Abstractions.dll</HintPath>
     </Reference>
@@ -50,6 +53,8 @@
     <Compile Include="Extensions\DocumentIdExtensions.cs" />
     <Compile Include="Extensions\PagingExtensions.cs" />
     <Compile Include="Extensions\TenantDatabaseExtensions.cs" />
+    <Compile Include="Profiling\JsonFormatter.cs" />
+    <Compile Include="Profiling\RavenProfiler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extensions\QueryExtensions.cs" />
   </ItemGroup>
