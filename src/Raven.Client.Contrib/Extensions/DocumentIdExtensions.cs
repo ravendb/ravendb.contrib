@@ -126,5 +126,27 @@ namespace Raven.Client.Contrib.Extensions
             var separator = documentStore.Conventions.IdentityPartsSeparator;
             return id.Split(new[] { separator }, StringSplitOptions.None);
         }
+
+        /// <summary>
+        /// Generates a document id using the registered conventions, such as the Raven HiLo generator.
+        /// Returns the id without applying it to any particular entity, thus allowing you to pre-generate the id.
+        /// Useful for detached operations, such as in CQRS. For example, the id could be generated ahead of time,
+        /// returned to the caller, then used in a command message.  The entity would then be created in a command
+        /// handler, using the id from the message.  There are other scenarios that this can also be useful.
+        /// </summary>
+        /// <typeparam name="T">The entity type.</typeparam>
+        /// <param name="session">The current session.</param>
+        /// <returns>The generated string id.</returns>
+        public static string GenerateIdFor<T>(this IAdvancedDocumentSessionOperations session)
+        {
+            // An entity instance is required to generate a key, but we only have a type.
+            // We might not have a public constructor, so we must use reflection.
+            var entity = Activator.CreateInstance(typeof(T), true);
+
+            // Generate an ID using the commands and conventions from the current session
+            var conventions = session.DocumentStore.Conventions;
+            var databaseCommands = session.GetDatabaseCommands();
+            return conventions.GenerateDocumentKey(databaseCommands, entity);
+        }
     }
 }
