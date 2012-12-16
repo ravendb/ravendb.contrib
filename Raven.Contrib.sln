@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Client.Contrib.Tests"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Client.Contrib.Profiling", "Raven.Client.Contrib.Profiling\Raven.Client.Contrib.Profiling.csproj", "{D3FE3CF5-DC6A-49DF-9F31-A4A74101FEAD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Client.Contrib.MVC", "Raven.Client.Contrib.MVC\Raven.Client.Contrib.MVC.csproj", "{F5AAEA0D-6ECE-4195-AD3F-43BD8010834A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{D3FE3CF5-DC6A-49DF-9F31-A4A74101FEAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3FE3CF5-DC6A-49DF-9F31-A4A74101FEAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3FE3CF5-DC6A-49DF-9F31-A4A74101FEAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5AAEA0D-6ECE-4195-AD3F-43BD8010834A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5AAEA0D-6ECE-4195-AD3F-43BD8010834A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5AAEA0D-6ECE-4195-AD3F-43BD8010834A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5AAEA0D-6ECE-4195-AD3F-43BD8010834A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
