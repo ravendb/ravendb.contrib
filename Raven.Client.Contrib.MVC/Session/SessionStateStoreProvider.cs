@@ -154,24 +154,24 @@ namespace Raven.Client.Contrib.MVC.Session
             {
                 db.Advanced.UseOptimisticConcurrency = true;
 
-                SessionState sessionState;
+                Session sessionState;
 
                 if (newItem)
                 {
-                    sessionState = db.Query<SessionState>()
+                    sessionState = db.Query<Session>()
                                      .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
                                      .SingleOrDefault(x => x.SessionId == id && x.ApplicationName == ApplicationName && x.Expires < DateTime.UtcNow);
 
                     if (sessionState != null)
                         throw new InvalidOperationException(String.Format("Item aleady exist with SessionId=\"{0}\" and ApplicationName=\"{1}\"", id, lockId));
 
-                    sessionState = new SessionState(id, ApplicationName);
+                    sessionState = new Session(id, ApplicationName);
 
                     db.Store(sessionState);
                 }
                 else
                 {
-                    sessionState = db.Query<SessionState>()
+                    sessionState = db.Query<Session>()
                                      .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
                                      .Single(x => x.SessionId == id && x.ApplicationName == ApplicationName && x.LockId == (int) lockId);
                 }
@@ -199,7 +199,7 @@ namespace Raven.Client.Contrib.MVC.Session
             {
                 db.Advanced.UseOptimisticConcurrency = true;
 
-                var sessionState = db.Query<SessionState>()
+                var sessionState = db.Query<Session>()
                                      .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
                                      .Single(x => x.SessionId == id && x.ApplicationName == ApplicationName && x.LockId == (int) lockId);
 
@@ -227,7 +227,7 @@ namespace Raven.Client.Contrib.MVC.Session
             {
                 db.Advanced.UseOptimisticConcurrency = true;
 
-                var sessionState = db.Query<SessionState>()
+                var sessionState = db.Query<Session>()
                                      .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
                                      .SingleOrDefault(x => x.SessionId == id && x.ApplicationName == ApplicationName && x.LockId == (int) lockId);
 
@@ -252,7 +252,7 @@ namespace Raven.Client.Contrib.MVC.Session
                 {
                     db.Advanced.UseOptimisticConcurrency = true;
 
-                    var sessionState = db.Query<SessionState>()
+                    var sessionState = db.Query<Session>()
                                          .SingleOrDefault(x => x.SessionId == id && x.ApplicationName == ApplicationName);
 
                     if (sessionState != null)
@@ -284,7 +284,7 @@ namespace Raven.Client.Contrib.MVC.Session
             {
                 var expiry = DateTime.UtcNow.AddMinutes(timeout);
 
-                var sessionState = new SessionState(id, ApplicationName)
+                var sessionState = new Session(id, ApplicationName)
                 {
                     Expires = expiry
                 };
@@ -369,7 +369,7 @@ namespace Raven.Client.Contrib.MVC.Session
                 db.Advanced.UseOptimisticConcurrency = true;
                 db.Advanced.AllowNonAuthoritativeInformation = false;
 
-                var sessionState = db.Query<SessionState>()
+                var sessionState = db.Query<Session>()
                                      .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
                                      .SingleOrDefault(x => x.SessionId == id && x.ApplicationName == ApplicationName);
 

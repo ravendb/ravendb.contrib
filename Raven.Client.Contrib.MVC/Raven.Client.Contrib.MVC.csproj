@@ -57,7 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Session\SessionState.cs" />
+    <Compile Include="Session\Session.cs" />
     <Compile Include="Session\SessionStateStoreProvider.cs" />
   </ItemGroup>
   <ItemGroup>

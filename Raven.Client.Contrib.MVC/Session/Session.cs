@@ -6,9 +6,9 @@ using System.Web.SessionState;
 
 namespace Raven.Client.Contrib.MVC.Session
 {
-    internal class SessionState
+    internal class Session
     {
-        public SessionState(string sessionId, string applicationName)
+        public Session(string sessionId, string applicationName)
         {
             SessionId       = sessionId;
             ApplicationName = applicationName;
