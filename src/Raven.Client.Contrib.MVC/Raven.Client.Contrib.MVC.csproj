@@ -32,6 +32,27 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BCrypt.Net">
+      <HintPath>..\packages\BCrypt-Official.0.1.107\lib\BCrypt.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth.AspNet">
+      <HintPath>..\packages\DotNetOpenAuth.AspNet.4.1.4.12333\lib\net40-full\DotNetOpenAuth.AspNet.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth.Core">
+      <HintPath>..\packages\DotNetOpenAuth.Core.4.1.4.12333\lib\net40-full\DotNetOpenAuth.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth.OAuth">
+      <HintPath>..\packages\DotNetOpenAuth.OAuth.Core.4.1.4.12333\lib\net40-full\DotNetOpenAuth.OAuth.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth.OAuth.Consumer">
+      <HintPath>..\packages\DotNetOpenAuth.OAuth.Consumer.4.1.4.12333\lib\net40-full\DotNetOpenAuth.OAuth.Consumer.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth.OpenId">
+      <HintPath>..\packages\DotNetOpenAuth.OpenId.Core.4.1.4.12333\lib\net40-full\DotNetOpenAuth.OpenId.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth.OpenId.RelyingParty">
+      <HintPath>..\packages\DotNetOpenAuth.OpenId.RelyingParty.4.1.4.12333\lib\net40-full\DotNetOpenAuth.OpenId.RelyingParty.dll</HintPath>
+    </Reference>
     <Reference Include="Raven.Abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=37f41c7f99471593, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\RavenDB.Client.2.0.2173-Unstable\lib\net40\Raven.Abstractions.dll</HintPath>
@@ -44,6 +65,12 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -52,6 +79,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Auth\Account.cs" />
+    <Compile Include="Auth\AuthConfiguration.cs" />
+    <Compile Include="Auth\AuthResult.cs" />
+    <Compile Include="Auth\AuthProvider.cs" />
+    <Compile Include="Auth\AuthProvider.Static.cs" />
+    <Compile Include="Auth\Default\BCryptSecurityEncoder.cs" />
+    <Compile Include="Auth\Default\FormsAuthenticator.cs" />
+    <Compile Include="Auth\DuplicateIdentifierException.cs" />
+    <Compile Include="Auth\DuplicateUserNameException.cs" />
+    <Compile Include="Auth\Interfaces\IAuthProvider.cs" />
+    <Compile Include="Auth\Interfaces\IExternalAuthProvider.cs" />
+    <Compile Include="Auth\InvalidCredentialsException.cs" />
+    <Compile Include="Auth\InvalidIdentifierException.cs" />
+    <Compile Include="Auth\InvalidPasswordException.cs" />
+    <Compile Include="Auth\InvalidPasswordResetTokenException.cs" />
+    <Compile Include="Auth\InvalidUserNameException.cs" />
+    <Compile Include="Auth\AuthException.cs" />
+    <Compile Include="Auth\Interfaces\IAuthenticator.cs" />
+    <Compile Include="Auth\Interfaces\ISecurityEncoder.cs" />
+    <Compile Include="Extensions\HttpContextExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Session\Session.cs" />
     <Compile Include="Session\SessionStateStoreProvider.cs" />
