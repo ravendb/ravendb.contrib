@@ -48,8 +48,22 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Listeners\AbstractDocumentConversionListenerContext.cs" />
+    <Compile Include="Listeners\AbstractDocumentDeleteListenerContext.cs" />
+    <Compile Include="Listeners\AbstractDocumentListenerContext.cs" />
+    <Compile Include="Listeners\AbstractDocumentQueryListenerContext.cs" />
+    <Compile Include="Listeners\AbstractDocumentStoreListenerContext.cs" />
+    <Compile Include="Listeners\AbstractLocalStorage.cs" />
+    <Compile Include="Listeners\ContextualDocumentConversionListener.cs" />
+    <Compile Include="Listeners\ContextualDocumentDeleteListener.cs" />
+    <Compile Include="Listeners\ContextualDocumentQueryListener.cs" />
+    <Compile Include="Listeners\ContextualDocumentStoreListener.cs" />
+    <Compile Include="Listeners\HttpContextLocalStorage.cs" />
+    <Compile Include="Listeners\LocalStorageProvider.cs" />
+    <Compile Include="Listeners\ThreadLocalStorage.cs" />
     <Compile Include="Extensions\AdvancedSessionExtensions.cs" />
     <Compile Include="Extensions\DocumentExtensions.cs" />
     <Compile Include="Extensions\DocumentIdExtensions.cs" />
