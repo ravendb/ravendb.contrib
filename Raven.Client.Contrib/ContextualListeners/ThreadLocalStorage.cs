@@ -5,7 +5,7 @@ namespace Raven.Client.Contrib.ContextualListeners
 {
 	internal class ThreadLocalStorage : AbstractLocalStorage
 	{
-		[ThreadStatic] private new static Dictionary<Type, Stack<object>> ContextsThreadStatic;
+		[ThreadStatic] private static Dictionary<Type, Stack<object>> ContextsThreadStatic;
 
 		protected override Dictionary<Type, Stack<object>> GetContexts()
 		{
