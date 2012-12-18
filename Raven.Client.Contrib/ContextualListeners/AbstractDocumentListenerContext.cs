@@ -3,9 +3,14 @@ using System.Collections.Generic;
 
 namespace Raven.Client.Contrib.ContextualListeners
 {
+	/// <summary>
+	/// Base listener context class. Inherit from one of <see cref="AbstractDocumentConversionListenerContext"/>,
+	/// <see cref="AbstractDocumentDeleteListenerContext"/> , <see cref="AbstractDocumentQueryListenerContext"/> 
+	/// <see cref="AbstractDocumentStoreListenerContext"/> insead.
+	/// </summary>
 	public abstract class AbstractDocumentListenerContext : IDisposable
 	{
-		protected AbstractDocumentListenerContext()
+		internal AbstractDocumentListenerContext()
 		{
 			Dictionary<Type, Stack<object>> contexts = LocalStorageProvider.Get().Contexts;
 			Type type = GetType();
