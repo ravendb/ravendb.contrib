@@ -1,6 +1,6 @@
 ﻿using Raven.Client.Connection;
 
-namespace Raven.Client.Contrib.Extensions
+namespace Raven.Client.Extensions
 {
     public static class DocumentExtensions
     {

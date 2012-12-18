@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Raven.Client.Contrib.Extensions
+namespace Raven.Client.Extensions
 {
     public static class DocumentIdExtensions
     {

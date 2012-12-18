@@ -7,7 +7,7 @@
     <ProjectGuid>{AA6FAC9A-000D-4A61-9B76-479EB4D769AD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Raven.Client.Contrib</RootNamespace>
+    <RootNamespace>Raven.Client</RootNamespace>
     <AssemblyName>Raven.Client.Contrib</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
