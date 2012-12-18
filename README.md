@@ -21,7 +21,7 @@ Please keep the following in mind:
 
 - You should use [xml summary comments](http://msdn.microsoft.com/en-us/library/vstudio/b2s063f7.aspx) on all public members, so that consumers of your code can use intellisense to easily figure out what your contribution does.  *This is especially important for extension methods.*
 
-- Contributions to this project should *augment* the official RavenDB libraries - not *subvert* them.  Pull requests for code that does the exact same thing as something Raven already handles (even if in a slightly different way), will likely be rejected.
+- Contributions to this project should *augment* the official RavenDB libraries - not *subvert* them.  A pull request for code that does something Raven already handles (even if in a slightly different way), will likely be rejected.
 
 - [Hibernating Rhinos](http://hibernatingrhinos.com) retains the right to veto anything we do here.  Raven is their baby.  Let's not make it ugly.  Try to keep their design principles in mind, such as "Safe by Default".
 
