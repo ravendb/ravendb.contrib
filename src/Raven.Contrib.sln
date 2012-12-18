@@ -14,7 +14,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Client.Contrib.Tests"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Client.Contrib.Profiling", "Raven.Client.Contrib.Profiling\Raven.Client.Contrib.Profiling.csproj", "{D3FE3CF5-DC6A-49DF-9F31-A4A74101FEAD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Client.Contrib.MVC", "Raven.Client.Contrib.MVC\Raven.Client.Contrib.MVC.csproj", "{F5AAEA0D-6ECE-4195-AD3F-43BD8010834A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Contrib.MVC", "Raven.Contrib.MVC\Raven.Contrib.MVC.csproj", "{F5AAEA0D-6ECE-4195-AD3F-43BD8010834A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
