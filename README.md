@@ -29,7 +29,7 @@ Please keep the following in mind:
 
 - If you contribute something to this project, you should be prepared for others to modify it.  You can certainly still make changes, but you are relinquishing control back to the community at large.  If you desire to retain control of your project, you should keep it in your own github repository.
 
-- Everything in this repository is [MIT licensed](https://github.com/ravendb/ravendb.contrib/blob/master/LICENSE.txt).  You may not change the license for any partial contribution.  Unlike [Raven's Contribution Rules](http://ravendb.net/contributing), we do not require a signed contributor license agreement.  By submitting a contribution, you are releasing all rights of intellectual property ownership.
+- Everything in this repository is [MIT licensed](https://github.com/ravendb/ravendb.contrib/blob/master/LICENSE.txt).  You may not change the license for any partial contribution.  Unlike [Raven's Contribution Rules](http://ravendb.net/contributing), we do not require a signed contributor license agreement.  By submitting a contribution, you are agreeing to release the code under the MIT license.
 
 - Community member [Matt Johnson](https://github.com/mj1856) is currently moderating this effort.  Matt has agreed to be as non-biased as possible, while attempting to coalesce everyone's contributions into a unified vision.
 
