@@ -1,7 +1,7 @@
 ﻿using Raven.Client.Connection;
 using Raven.Client.Document;
 
-namespace Raven.Client.Contrib.Extensions
+namespace Raven.Client.Extensions
 {
     public static class AdvancedSessionExtensions
     {
