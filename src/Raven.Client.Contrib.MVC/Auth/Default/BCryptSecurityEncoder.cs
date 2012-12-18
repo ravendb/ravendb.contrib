@@ -9,15 +9,6 @@ namespace Raven.Client.Contrib.MVC.Auth.Default
     internal class BCryptSecurityEncoder : ISecurityEncoder
     {
         /// <summary>
-        /// Generates a salt suitable for hashing.
-        /// </summary>
-        /// <returns>The salt.</returns>
-        public string GenerateHash()
-        {
-            return BCrypt.Net.BCrypt.GenerateSalt();
-        }
-
-        /// <summary>
         /// Generates a unique token.
         /// </summary>
         /// <returns>The unique token.</returns>
@@ -32,11 +23,10 @@ namespace Raven.Client.Contrib.MVC.Auth.Default
         /// Hashes the identifier with the provided salt.
         /// </summary>
         /// <param name="identifier">The identifier to hash.</param>
-        /// <param name="salt">The salt to use in the hashing algorithm.</param>
         /// <returns>The hashed identifier.</returns>
-        public string Hash(string identifier, string salt)
+        public string Hash(string identifier)
         {
-            return BCrypt.Net.BCrypt.HashPassword(identifier, salt);
+            return BCrypt.Net.BCrypt.HashPassword(identifier, workFactor: 10);
         }
 
         /// <summary>

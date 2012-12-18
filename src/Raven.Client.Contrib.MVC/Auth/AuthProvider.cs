@@ -101,7 +101,7 @@ namespace Raven.Client.Contrib.MVC.Auth
                 db.Store(new Account
                 {
                     UserName = userName,
-                    Password = _encoder.Hash(password, _encoder.GenerateHash()),
+                    Password = _encoder.Hash(password),
                 });
                 db.SaveChanges();
             }
@@ -154,7 +154,7 @@ namespace Raven.Client.Contrib.MVC.Auth
                 if (!_encoder.Verify(oldPassword, user.Password))
                     throw new InvalidPasswordException();
 
-                user.Password = _encoder.Hash(newPassword, _encoder.GenerateHash());
+                user.Password = _encoder.Hash(newPassword);
 
                 db.SaveChanges();
             }
@@ -179,7 +179,7 @@ namespace Raven.Client.Contrib.MVC.Auth
                 if (user == null)
                     throw new InvalidUserNameException(userName);
 
-                user.Password = _encoder.Hash(newPassword, _encoder.GenerateHash());
+                user.Password = _encoder.Hash(newPassword);
 
                 db.SaveChanges();
             }
@@ -236,7 +236,7 @@ namespace Raven.Client.Contrib.MVC.Auth
                 if (user == null)
                     throw new InvalidUserNameException(passwordResetToken);
 
-                user.Password                     = _encoder.Hash(newPassword, _encoder.GenerateHash());
+                user.Password                     = _encoder.Hash(newPassword);
                 user.PasswordResetToken           = null;
                 user.PasswordResetTokenExpiration = null;
 
