@@ -7,7 +7,7 @@
     <ProjectGuid>{AA6FAC9A-000D-4A61-9B76-479EB4D769AD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Raven.Client.Contrib</RootNamespace>
+    <RootNamespace>Raven.Client</RootNamespace>
     <AssemblyName>Raven.Client.Contrib</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -43,8 +43,22 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ContextualListeners\AbstractDocumentConversionListenerContext.cs" />
+    <Compile Include="ContextualListeners\AbstractDocumentDeleteListenerContext.cs" />
+    <Compile Include="ContextualListeners\AbstractDocumentListenerContext.cs" />
+    <Compile Include="ContextualListeners\AbstractDocumentQueryListenerContext.cs" />
+    <Compile Include="ContextualListeners\AbstractDocumentStoreListenerContext.cs" />
+    <Compile Include="ContextualListeners\AbstractLocalStorage.cs" />
+    <Compile Include="ContextualListeners\ContextualDocumentConversionListener.cs" />
+    <Compile Include="ContextualListeners\ContextualDocumentDeleteListener.cs" />
+    <Compile Include="ContextualListeners\ContextualDocumentQueryListener.cs" />
+    <Compile Include="ContextualListeners\ContextualDocumentStoreListener.cs" />
+    <Compile Include="ContextualListeners\HttpContextLocalStorage.cs" />
+    <Compile Include="ContextualListeners\LocalStorageProvider.cs" />
+    <Compile Include="ContextualListeners\ThreadLocalStorage.cs" />
     <Compile Include="Extensions\AdvancedSessionExtensions.cs" />
     <Compile Include="Extensions\DocumentExtensions.cs" />
     <Compile Include="Extensions\DocumentIdExtensions.cs" />
