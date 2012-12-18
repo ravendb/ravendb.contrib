@@ -26,7 +26,10 @@ namespace Raven.Client.Contrib.MVC.Auth.Default
         /// <returns>The hashed identifier.</returns>
         public string Hash(string identifier)
         {
-            return BCrypt.Net.BCrypt.HashPassword(identifier, workFactor: 10);
+            const string pepper = "BCryptSecurityEncoder";
+            string salt         = BCrypt.Net.BCrypt.GenerateSalt(workFactor: 10);
+
+            return BCrypt.Net.BCrypt.HashPassword(identifier, salt + pepper);
         }
 
         /// <summary>
