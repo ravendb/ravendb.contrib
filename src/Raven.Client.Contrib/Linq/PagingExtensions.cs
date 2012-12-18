@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Raven.Client.Extensions;
 
 namespace Raven.Client.Linq
 {
