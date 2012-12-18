@@ -61,22 +61,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ContextualListeners\AbstractContextualDocumentListenerTests.cs" />
-    <Compile Include="ContextualListeners\Contexts\ConversionContext.cs" />
-    <Compile Include="ContextualListeners\Contexts\DeleteContext.cs" />
-    <Compile Include="ContextualListeners\Contexts\QueryContext.cs" />
-    <Compile Include="ContextualListeners\Contexts\StoreContext.cs" />
-    <Compile Include="ContextualListeners\ContextualDocumentConversionListenerTests.cs" />
-    <Compile Include="ContextualListeners\ContextualDocumentDeleteListenerTests.cs" />
-    <Compile Include="ContextualListeners\ContextualDocumentQueryListenerTests.cs" />
-    <Compile Include="ContextualListeners\ContextualDocumentStoreListenerTests.cs" />
-    <Compile Include="ContextualListeners\Doc.cs" />
-    <Compile Include="ContextualListeners\HaackHttpSimulator\HttpSimulator.cs" />
-    <Compile Include="ContextualListeners\HaackHttpSimulator\ReflectionHelper.cs" />
-    <Compile Include="ContextualListeners\HaackHttpSimulator\SimulatedHttpRequest.cs" />
-    <Compile Include="ContextualListeners\HttpContextHelper.cs" />
-    <Compile Include="ContextualListeners\MultipleContextualDocumentListenerTests.cs" />
-    <Compile Include="ContextualListeners\Sample.cs" />
+    <Compile Include="Listeners\AbstractContextualDocumentListenerTests.cs" />
+    <Compile Include="Listeners\Contexts\ConversionContext.cs" />
+    <Compile Include="Listeners\Contexts\DeleteContext.cs" />
+    <Compile Include="Listeners\Contexts\QueryContext.cs" />
+    <Compile Include="Listeners\Contexts\StoreContext.cs" />
+    <Compile Include="Listeners\ContextualDocumentConversionListenerTests.cs" />
+    <Compile Include="Listeners\ContextualDocumentDeleteListenerTests.cs" />
+    <Compile Include="Listeners\ContextualDocumentQueryListenerTests.cs" />
+    <Compile Include="Listeners\ContextualDocumentStoreListenerTests.cs" />
+    <Compile Include="Listeners\Doc.cs" />
+    <Compile Include="Listeners\HaackHttpSimulator\HttpSimulator.cs" />
+    <Compile Include="Listeners\HaackHttpSimulator\ReflectionHelper.cs" />
+    <Compile Include="Listeners\HaackHttpSimulator\SimulatedHttpRequest.cs" />
+    <Compile Include="Listeners\HttpContextHelper.cs" />
+    <Compile Include="Listeners\MultipleContextualDocumentListenerTests.cs" />
+    <Compile Include="Listeners\Sample.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ExtensionTests\PagingExtensionTests.cs" />
     <Compile Include="TestEntities\Ball.cs" />
