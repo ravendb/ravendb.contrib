@@ -1,4 +1,4 @@
-using Raven.Client.ContextualListeners;
+using Raven.Client.Contrib.ContextualListeners;
 
 namespace Raven.Client.Contrib.Tests.ContextualListeners.Contexts
 {

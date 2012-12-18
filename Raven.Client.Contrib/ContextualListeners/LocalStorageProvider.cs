@@ -1,6 +1,6 @@
 using System.Web;
 
-namespace Raven.Client.ContextualListeners
+namespace Raven.Client.Contrib.ContextualListeners
 {
 	internal static class LocalStorageProvider
 	{

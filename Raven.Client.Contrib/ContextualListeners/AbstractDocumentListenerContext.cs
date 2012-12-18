@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Raven.Client.ContextualListeners
+namespace Raven.Client.Contrib.ContextualListeners
 {
 	public abstract class AbstractDocumentListenerContext : IDisposable
 	{

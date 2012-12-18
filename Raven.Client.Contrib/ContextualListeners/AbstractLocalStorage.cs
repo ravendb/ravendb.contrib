@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Raven.Client.ContextualListeners
+namespace Raven.Client.Contrib.ContextualListeners
 {
 	internal abstract class AbstractLocalStorage
 	{

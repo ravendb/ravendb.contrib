@@ -1,6 +1,6 @@
 using Raven.Client.Listeners;
 
-namespace Raven.Client.ContextualListeners
+namespace Raven.Client.Contrib.ContextualListeners
 {
 	public abstract class AbstractDocumentQueryListenerContext : AbstractDocumentListenerContext, IDocumentQueryListener
 	{

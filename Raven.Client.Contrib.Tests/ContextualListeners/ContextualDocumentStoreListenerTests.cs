@@ -1,5 +1,5 @@
 using System;
-using Raven.Client.ContextualListeners;
+using Raven.Client.Contrib.ContextualListeners;
 using Raven.Client.Contrib.Tests.ContextualListeners.Contexts;
 using Xunit;
 

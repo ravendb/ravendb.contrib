@@ -1,4 +1,4 @@
-﻿using Raven.Client.ContextualListeners;
+﻿using Raven.Client.Contrib.ContextualListeners;
 using Raven.Client.Document;
 using Raven.Json.Linq;
 
