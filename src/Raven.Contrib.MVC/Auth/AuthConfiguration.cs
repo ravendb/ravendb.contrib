@@ -11,8 +11,6 @@ namespace Raven.Contrib.MVC.Auth
 {
     public class AuthConfiguration
     {
-        private HttpContextBase _authContext;
-
         public AuthConfiguration()
         {
             Authenticator   = new FormsAuthenticator();
@@ -44,28 +42,6 @@ namespace Raven.Contrib.MVC.Auth
         {
             get;
             set;
-        }
-
-        /// <summary>
-        /// The current authentication context.
-        /// </summary>
-        public HttpContextBase AuthContext
-        {
-            get
-            {
-                if (_authContext == null)
-                {
-                    return new HttpContextWrapper(HttpContext.Current);
-                }
-                else
-                {
-                    return _authContext;
-                }
-            }
-            set
-            {
-                _authContext = value;
-            }
         }
     }
 }

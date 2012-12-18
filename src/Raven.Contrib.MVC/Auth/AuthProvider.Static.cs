@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web;
-using DotNetOpenAuth.AspNet;
 using Raven.Contrib.MVC.Auth.Interfaces;
 using Raven.Contrib.MVC.Extensions;
 
@@ -62,19 +61,12 @@ namespace Raven.Contrib.MVC.Auth
         /// <summary>
         /// Verifies the OAuth/OpenID authentication.
         /// </summary>
+        /// <param name="providerName">The provider name.</param>
         /// <returns>The authentication result.</returns>
-        public static AuthResult VerifyAuthentication()
+        public static AuthResult VerifyAuthentication(string providerName)
         {
-            string providerName = OpenAuthSecurityManager.GetProviderName(Configuration.AuthContext);
-
-            if (String.IsNullOrEmpty(providerName))
-            {
-                return new AuthResult
-                {
-                    Result    = AuthResult.Status.Failed,
-                    Exception = new InvalidOperationException("Current provider name is null"),
-                };
-            }
+            if (providerName == null)
+                throw new ArgumentNullException("providerName");
 
             var provider = Providers[providerName];
             var context  = new HttpContextWrapper(HttpContext.Current);
