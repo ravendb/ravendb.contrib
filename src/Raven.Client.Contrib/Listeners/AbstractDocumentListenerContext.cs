@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Raven.Client.Contrib.Listeners
+namespace Raven.Client.Listeners
 {
 	/// <summary>
 	/// Base listener context class. Inherit from one of <see cref="AbstractDocumentConversionListenerContext"/>,

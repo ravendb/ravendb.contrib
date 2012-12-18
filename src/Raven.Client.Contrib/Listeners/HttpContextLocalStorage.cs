@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Web;
 
-namespace Raven.Client.Contrib.Listeners
+namespace Raven.Client.Listeners
 {
 	internal class HttpContextLocalStorage : AbstractLocalStorage
 	{

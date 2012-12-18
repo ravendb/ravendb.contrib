@@ -1,7 +1,6 @@
-using Raven.Client.Listeners;
 using Raven.Json.Linq;
 
-namespace Raven.Client.Contrib.Listeners
+namespace Raven.Client.Listeners
 {
 	/// <summary>
 	/// Hook for users to provide additional logic on delete operations with context.

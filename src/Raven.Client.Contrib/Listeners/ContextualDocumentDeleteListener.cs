@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using Raven.Client.Listeners;
 using Raven.Json.Linq;
 
-namespace Raven.Client.Contrib.Listeners
+namespace Raven.Client.Listeners
 {
 	public class ContextualDocumentDeleteListener<T> : IDocumentDeleteListener
 		where T : AbstractDocumentDeleteListenerContext

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using Raven.Client.Listeners;
 
-namespace Raven.Client.Contrib.Listeners
+namespace Raven.Client.Listeners
 {
 	public class ContextualDocumentQueryListener<T> : IDocumentQueryListener
 		where T : AbstractDocumentQueryListenerContext

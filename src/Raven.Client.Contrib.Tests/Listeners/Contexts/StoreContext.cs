@@ -1,4 +1,4 @@
-using Raven.Client.Contrib.Listeners;
+using Raven.Client.Listeners;
 using Raven.Json.Linq;
 
 namespace Raven.Client.Contrib.Tests.Listeners.Contexts

@@ -1,7 +1,6 @@
-using Raven.Client.Listeners;
 using Raven.Json.Linq;
 
-namespace Raven.Client.Contrib.Listeners
+namespace Raven.Client.Listeners
 {
 	/// <summary>
 	/// Hook for users to provide additional logic for converting to / from entities to document/metadata pairs with context.

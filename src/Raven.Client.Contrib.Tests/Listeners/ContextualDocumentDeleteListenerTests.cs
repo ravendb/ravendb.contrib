@@ -1,6 +1,6 @@
 using System;
-using Raven.Client.Contrib.Listeners;
 using Raven.Client.Contrib.Tests.Listeners.Contexts;
+using Raven.Client.Listeners;
 using Xunit;
 
 namespace Raven.Client.Contrib.Tests.Listeners

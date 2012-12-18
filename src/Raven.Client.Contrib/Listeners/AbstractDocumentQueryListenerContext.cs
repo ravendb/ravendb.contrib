@@ -1,6 +1,4 @@
-using Raven.Client.Listeners;
-
-namespace Raven.Client.Contrib.Listeners
+namespace Raven.Client.Listeners
 {
 	/// <summary>
 	/// Hook for users to modify all queries globally with context.
