@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Web.SessionState;
 
-namespace Raven.Client.Contrib.MVC.Session
+namespace Raven.Contrib.MVC.Session
 {
     internal class Session
     {

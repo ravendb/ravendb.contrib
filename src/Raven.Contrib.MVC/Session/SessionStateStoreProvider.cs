@@ -10,10 +10,11 @@ using System.Web.Configuration;
 using System.Web.Hosting;
 using System.Web.SessionState;
 using Raven.Abstractions.Exceptions;
+using Raven.Client;
 using Raven.Client.Document;
 using Raven.Json.Linq;
 
-namespace Raven.Client.Contrib.MVC.Session
+namespace Raven.Contrib.MVC.Session
 {
     /// <summary>
     /// Session state store provider for RavenDB. Based on: https://github.com/mjrichardson/RavenDbSessionStateStoreProvider
