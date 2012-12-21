@@ -12,11 +12,18 @@ namespace Raven.Client.Listeners
 	{
 		public bool BeforeStore(string key, object entityInstance, RavenJObject metadata, RavenJObject original)
 		{
+            // leave raven system docs alone
+		    if (key.StartsWith("Raven/"))
+		        return false;
+
 			RavenJToken lastModified;
 			if (!metadata.TryGetValue(Constants.LastModified, out lastModified))
-				metadata.Add("Created", SystemTime.UtcNow);
+			{
+			    metadata.Add("Created", SystemTime.UtcNow);
+			    return true;
+			}
 
-			return true;
+			return false;
 		}
 
 		public void AfterStore(string key, object entityInstance, RavenJObject metadata) { }
