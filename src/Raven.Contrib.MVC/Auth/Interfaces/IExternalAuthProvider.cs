@@ -24,11 +24,8 @@ namespace Raven.Contrib.MVC.Auth.Interfaces
         /// and upon succcess or failure, redirect users back to the specified url.
         /// </summary>
         /// <param name="context">The context of the current request.</param>
-        /// <param name="returnUrl">
-        /// The return url after users have completed
-        /// authenticating against external website.
-        /// </param>
-        void RequestAuthentication(HttpContextBase context, Uri returnUrl);
+        /// <param name="callbackUri"> The URI to return to in order to complete authentication.</param>
+        void RequestAuthentication(HttpContextBase context, Uri callbackUri);
 
         /// <summary>
         /// Check if authentication succeeded after user is redirected back
