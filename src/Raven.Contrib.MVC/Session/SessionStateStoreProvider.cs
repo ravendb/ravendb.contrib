@@ -19,28 +19,29 @@ namespace Raven.Contrib.MVC.Session
     /// <summary>
     /// Session state store provider for RavenDB. Based on: https://github.com/mjrichardson/RavenDbSessionStateStoreProvider
     /// </summary>
-    public class RavenSessionStateStoreProvider : SessionStateStoreProviderBase, IDisposable
+    public class SessionStateStoreProvider : SessionStateStoreProviderBase, IDisposable
     {
         private const int RetriesOnConcurrentConfictsDefault = 3;
 
-        private IDocumentStore _store;
+        private IDocumentStore _dbStore;
+        private IDocumentSession _dbSession;
         private SessionStateSection _config;
         private int _retries = RetriesOnConcurrentConfictsDefault;
 
         /// <summary>
         /// Public parameterless constructor
         /// </summary>
-        public RavenSessionStateStoreProvider()
+        public SessionStateStoreProvider()
         {
-            
+
         }
 
         /// <summary>
         /// Constructor accepting a document store instance, used for testing.
         /// </summary>
-        public RavenSessionStateStoreProvider(IDocumentStore documentStore)
+        public SessionStateStoreProvider(IDocumentStore documentStore)
         {
-            _store = documentStore;
+            _dbStore = documentStore;
         }
 
         /// <summary>
@@ -74,12 +75,12 @@ namespace Raven.Contrib.MVC.Session
 
             _config = (SessionStateSection)ConfigurationManager.GetSection("system.web/sessionState");
 
-            if (_store == null)
+            if (_dbStore == null)
             {
                 if (String.IsNullOrEmpty(config["connectionStringName"]))
                     throw new ConfigurationErrorsException("Must supply a connectionStringName.");
 
-                _store = new DocumentStore
+                _dbStore = new DocumentStore
                 {
                     ConnectionStringName = config["connectionStringName"],
                     Conventions =
@@ -88,7 +89,7 @@ namespace Raven.Contrib.MVC.Session
                     }
                 };
 
-                _store.Initialize();
+                _dbStore.Initialize();
             }
         }
 
@@ -151,41 +152,36 @@ namespace Raven.Contrib.MVC.Session
         {
             var serializedItems = Serialize((SessionStateItemCollection)item.Items);
 
-            using (var db = _store.OpenSession())
+            Session sessionState;
+
+            if (newItem)
             {
-                db.Advanced.UseOptimisticConcurrency = true;
+                sessionState = _dbSession.Query<Session>()
+                                         .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
+                                         .SingleOrDefault(x => x.SessionId == id && x.ApplicationName == ApplicationName && x.Expires < DateTime.UtcNow);
 
-                Session sessionState;
+                if (sessionState != null)
+                    throw new InvalidOperationException(String.Format("Item aleady exist with SessionId=\"{0}\" and ApplicationName=\"{1}\"", id, lockId));
 
-                if (newItem)
-                {
-                    sessionState = db.Query<Session>()
-                                     .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
-                                     .SingleOrDefault(x => x.SessionId == id && x.ApplicationName == ApplicationName && x.Expires < DateTime.UtcNow);
+                sessionState = new Session(id, ApplicationName);
 
-                    if (sessionState != null)
-                        throw new InvalidOperationException(String.Format("Item aleady exist with SessionId=\"{0}\" and ApplicationName=\"{1}\"", id, lockId));
-
-                    sessionState = new Session(id, ApplicationName);
-
-                    db.Store(sessionState);
-                }
-                else
-                {
-                    sessionState = db.Query<Session>()
-                                     .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
-                                     .Single(x => x.SessionId == id && x.ApplicationName == ApplicationName && x.LockId == (int) lockId);
-                }
-
-                var expiry = DateTime.UtcNow.AddMinutes(_config.Timeout.TotalMinutes);
-
-                sessionState.Expires      = expiry;
-                sessionState.SessionItems = serializedItems;
-                sessionState.Locked       = false;
-
-                db.Advanced.GetMetadataFor(sessionState)["Raven-Expiration-Date"] = new RavenJValue(expiry);
-                db.SaveChanges();
+                _dbSession.Store(sessionState);
             }
+            else
+            {
+                sessionState = _dbSession.Query<Session>()
+                                         .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
+                                         .Single(x => x.SessionId == id && x.ApplicationName == ApplicationName && x.LockId == (int)lockId);
+            }
+
+            var expiry = DateTime.UtcNow.AddMinutes(_config.Timeout.TotalMinutes);
+
+            sessionState.Expires = expiry;
+            sessionState.SessionItems = serializedItems;
+            sessionState.Locked = false;
+
+            _dbSession.Advanced.GetMetadataFor(sessionState)["Raven-Expiration-Date"] = new RavenJValue(expiry);
+            _dbSession.SaveChanges();
         }
 
         /// <summary>
@@ -196,22 +192,17 @@ namespace Raven.Contrib.MVC.Session
         /// <param name="lockId">The lock identifier for the current request.</param>
         public override void ReleaseItemExclusive(HttpContext context, string id, object lockId)
         {
-            using (var db = _store.OpenSession())
-            {
-                db.Advanced.UseOptimisticConcurrency = true;
+            var sessionState = _dbSession.Query<Session>()
+                                          .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
+                                          .Single(x => x.SessionId == id && x.ApplicationName == ApplicationName && x.LockId == (int)lockId);
 
-                var sessionState = db.Query<Session>()
-                                     .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
-                                     .Single(x => x.SessionId == id && x.ApplicationName == ApplicationName && x.LockId == (int) lockId);
+            var expiry = DateTime.UtcNow.AddMinutes(_config.Timeout.TotalMinutes);
 
-                var expiry = DateTime.UtcNow.AddMinutes(_config.Timeout.TotalMinutes);
+            sessionState.Expires = expiry;
+            sessionState.Locked = false;
 
-                sessionState.Expires = expiry;
-                sessionState.Locked  = false;
-
-                db.Advanced.GetMetadataFor(sessionState)["Raven-Expiration-Date"] = new RavenJValue(expiry);
-                db.SaveChanges();
-            }
+            _dbSession.Advanced.GetMetadataFor(sessionState)["Raven-Expiration-Date"] = new RavenJValue(expiry);
+            _dbSession.SaveChanges();
         }
 
         /// <summary>
@@ -224,19 +215,14 @@ namespace Raven.Contrib.MVC.Session
         /// <param name="item"></param>
         public override void RemoveItem(HttpContext context, string id, object lockId, SessionStateStoreData item)
         {
-            using (var db = _store.OpenSession())
+            var sessionState = _dbSession.Query<Session>()
+                                         .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
+                                         .SingleOrDefault(x => x.SessionId == id && x.ApplicationName == ApplicationName && x.LockId == (int)lockId);
+
+            if (sessionState != null)
             {
-                db.Advanced.UseOptimisticConcurrency = true;
-
-                var sessionState = db.Query<Session>()
-                                     .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
-                                     .SingleOrDefault(x => x.SessionId == id && x.ApplicationName == ApplicationName && x.LockId == (int) lockId);
-
-                if (sessionState != null)
-                {
-                    db.Delete(sessionState);
-                    db.SaveChanges();
-                }
+                _dbSession.Delete(sessionState);
+                _dbSession.SaveChanges();
             }
         }
 
@@ -249,22 +235,17 @@ namespace Raven.Contrib.MVC.Session
         {
             try
             {
-                using (var db = _store.OpenSession())
+                var sessionState = _dbSession.Query<Session>()
+                                             .SingleOrDefault(x => x.SessionId == id && x.ApplicationName == ApplicationName);
+
+                if (sessionState != null)
                 {
-                    db.Advanced.UseOptimisticConcurrency = true;
+                    var expiry = DateTime.UtcNow.AddMinutes(_config.Timeout.TotalMinutes);
 
-                    var sessionState = db.Query<Session>()
-                                         .SingleOrDefault(x => x.SessionId == id && x.ApplicationName == ApplicationName);
+                    sessionState.Expires = expiry;
 
-                    if (sessionState != null)
-                    {
-                        var expiry = DateTime.UtcNow.AddMinutes(_config.Timeout.TotalMinutes);
-
-                        sessionState.Expires = expiry;
-
-                        db.Advanced.GetMetadataFor(sessionState)["Raven-Expiration-Date"] = new RavenJValue(expiry);
-                        db.SaveChanges();
-                    }
+                    _dbSession.Advanced.GetMetadataFor(sessionState)["Raven-Expiration-Date"] = new RavenJValue(expiry);
+                    _dbSession.SaveChanges();
                 }
             }
             catch (ConcurrencyException)
@@ -281,21 +262,17 @@ namespace Raven.Contrib.MVC.Session
         /// <param name="timeout">The expiry timeout in minutes.</param>
         public override void CreateUninitializedItem(HttpContext context, string id, int timeout)
         {
-            using (var db = _store.OpenSession())
+            var expiry = DateTime.UtcNow.AddMinutes(timeout);
+
+            var sessionState = new Session(id, ApplicationName)
             {
-                var expiry = DateTime.UtcNow.AddMinutes(timeout);
+                Expires = expiry
+            };
 
-                var sessionState = new Session(id, ApplicationName)
-                {
-                    Expires = expiry
-                };
-
-                db.Store(sessionState);
-                db.Advanced.GetMetadataFor(sessionState)["Raven-Expiration-Date"] = new RavenJValue(expiry);
-                db.SaveChanges();
-            }
+            _dbSession.Store(sessionState);
+            _dbSession.Advanced.GetMetadataFor(sessionState)["Raven-Expiration-Date"] = new RavenJValue(expiry);
+            _dbSession.SaveChanges();
         }
-
 
         /// <summary>
         ///  returns a new SessionStateStoreData object with an empty ISessionStateItemCollection object, 
@@ -327,6 +304,9 @@ namespace Raven.Contrib.MVC.Session
         /// <param name="context">The HttpContext instance for the current request</param>
         public override void InitializeRequest(HttpContext context)
         {
+            _dbSession = _dbStore.OpenSession();
+            _dbSession.Advanced.UseOptimisticConcurrency = true;
+            _dbSession.Advanced.AllowNonAuthoritativeInformation = false;
         }
 
         /// <summary>
@@ -335,21 +315,24 @@ namespace Raven.Contrib.MVC.Session
         /// <param name="context">The HttpContext instance for the current request</param>
         public override void EndRequest(HttpContext context)
         {
+            _dbSession.Dispose();
+            _dbSession = null;
         }
 
         public override void Dispose()
         {
-            if (_store != null)
-                _store.Dispose();
+            if (_dbSession != null)
+                _dbSession.Dispose();
+
+            if (_dbStore != null)
+                _dbStore.Dispose();
         }
 
-        //
         // GetSessionStoreItem is called by both the GetItem and 
         // GetItemExclusive methods. GetSessionStoreItem retrieves the 
         // session data from the data source. If the lockRecord parameter
         // is true (in the case of GetItemExclusive), then GetSessionStoreItem
         // locks the record and sets a new LockId and LockDate.
-        //
         private SessionStateStoreData GetSessionStoreItem(bool lockRecord,
                                                           HttpContext context,
                                                           string id,
@@ -360,88 +343,82 @@ namespace Raven.Contrib.MVC.Session
                                                           out SessionStateActions actionFlags)
         {
             // Initial values for return value and out parameters.
-            lockAge     = TimeSpan.Zero;
-            lockId      = null;
-            locked      = false;
+            lockAge = TimeSpan.Zero;
+            lockId = null;
+            locked = false;
             actionFlags = 0;
 
-            using (var db = _store.OpenSession())
+            var sessionState = _dbSession.Query<Session>()
+                                         .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
+                                         .SingleOrDefault(x => x.SessionId == id && x.ApplicationName == ApplicationName);
+
+            if (sessionState == null)
+                return null;
+
+            // Abort if locked.
+            if (sessionState.Locked)
             {
-                db.Advanced.UseOptimisticConcurrency = true;
-                db.Advanced.AllowNonAuthoritativeInformation = false;
-
-                var sessionState = db.Query<Session>()
-                                     .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
-                                     .SingleOrDefault(x => x.SessionId == id && x.ApplicationName == ApplicationName);
-
-                if (sessionState == null)
-                    return null;
-
-                // Abort if locked.
-                if (sessionState.Locked)
-                {
-                    locked  = true;
-                    lockAge = DateTime.UtcNow.Subtract(sessionState.LockDate);
-                    lockId  = sessionState.LockId;
-
-                    return null;
-                }
-
-                // We shouldn't get expired items if the expiration bundle is installed.
-                // If it isn't installed, or we made the window, we'll delete expired items here.
-                if (sessionState.Expires < DateTime.UtcNow)
-                {
-                    try
-                    {
-                        db.Delete(sessionState);
-                        db.SaveChanges();
-                    }
-                    catch (ConcurrencyException)
-                    {
-                        // Don't care.
-                    }
-
-                    return null;
-                }
-
-                if (lockRecord)
-                {
-                    sessionState.Locked   = true;
-                    sessionState.LockId += 1;
-                    sessionState.LockDate = DateTime.UtcNow;
-
-                    try
-                    {
-                        db.SaveChanges();
-                    }
-                    catch (ConcurrencyException)
-                    {
-                        if (retriesRemaining > 0)
-                        {
-                            return GetSessionStoreItem(true, context, id, retriesRemaining - 1, out locked, out lockAge, out lockId, out actionFlags);
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
-                }
-
+                locked = true;
+                lockAge = DateTime.UtcNow.Subtract(sessionState.LockDate);
                 lockId = sessionState.LockId;
 
-                var timeout = (int)_config.Timeout.TotalMinutes;
+                return null;
+            }
 
-                if (sessionState.Flags == SessionStateActions.InitializeItem)
+            // We shouldn't get expired items if the expiration bundle is installed.
+            // If it isn't installed, or we made the window, we'll delete expired items here.
+            if (sessionState.Expires < DateTime.UtcNow)
+            {
+                try
                 {
-                    var collection = new SessionStateItemCollection();
-                    var objects    = SessionStateUtility.GetSessionStaticObjects(context);
+                    _dbSession.Delete(sessionState);
+                    _dbSession.SaveChanges();
+                }
+                catch (ConcurrencyException)
+                {
+                    // Don't care.
+                }
 
-                    return new SessionStateStoreData(collection, objects, timeout);
-                }
-                else
+                return null;
+            }
+
+            if (lockRecord)
+            {
+                sessionState.Locked = true;
+                sessionState.LockId += 1;
+                sessionState.LockDate = DateTime.UtcNow;
+
+                try
                 {
-                    return Deserialize(context, sessionState.SessionItems, timeout);
+                    _dbSession.SaveChanges();
                 }
+                catch (ConcurrencyException)
+                {
+                    if (retriesRemaining > 0)
+                    {
+                        return GetSessionStoreItem(true, context, id, retriesRemaining - 1, out locked, out lockAge, out lockId, out actionFlags);
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+
+            lockId = sessionState.LockId;
+
+            var timeout = (int)_config.Timeout.TotalMinutes;
+
+            if (sessionState.Flags == SessionStateActions.InitializeItem)
+            {
+                var collection = new SessionStateItemCollection();
+                var objects = SessionStateUtility.GetSessionStaticObjects(context);
+
+                return new SessionStateStoreData(collection, objects, timeout);
+            }
+            else
+            {
+                return Deserialize(context, sessionState.SessionItems, timeout);
             }
         }
 
@@ -464,8 +441,8 @@ namespace Raven.Contrib.MVC.Session
         {
             using (var stream = new MemoryStream(Convert.FromBase64String(serializedItems)))
             {
-                var items    = new SessionStateItemCollection();
-                var objects  = SessionStateUtility.GetSessionStaticObjects(context);
+                var items = new SessionStateItemCollection();
+                var objects = SessionStateUtility.GetSessionStaticObjects(context);
 
                 if (stream.Length > 0)
                 {
