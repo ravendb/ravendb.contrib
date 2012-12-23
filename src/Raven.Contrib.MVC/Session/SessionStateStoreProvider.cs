@@ -19,7 +19,7 @@ namespace Raven.Contrib.MVC.Session
     /// <summary>
     /// Session state store provider for RavenDB. Based on: https://github.com/mjrichardson/RavenDbSessionStateStoreProvider
     /// </summary>
-    public class RavenSessionStateStoreProvider : SessionStateStoreProviderBase, IDisposable
+    public class SessionStateStoreProvider : SessionStateStoreProviderBase, IDisposable
     {
         private const int RetriesOnConcurrentConfictsDefault = 3;
 
@@ -30,7 +30,7 @@ namespace Raven.Contrib.MVC.Session
         /// <summary>
         /// Public parameterless constructor
         /// </summary>
-        public RavenSessionStateStoreProvider()
+        public SessionStateStoreProvider()
         {
             
         }
@@ -38,7 +38,7 @@ namespace Raven.Contrib.MVC.Session
         /// <summary>
         /// Constructor accepting a document store instance, used for testing.
         /// </summary>
-        public RavenSessionStateStoreProvider(IDocumentStore documentStore)
+        public SessionStateStoreProvider(IDocumentStore documentStore)
         {
             _store = documentStore;
         }
@@ -153,8 +153,6 @@ namespace Raven.Contrib.MVC.Session
 
             using (var db = _store.OpenSession())
             {
-                db.Advanced.UseOptimisticConcurrency = true;
-
                 Session sessionState;
 
                 if (newItem)
@@ -198,8 +196,6 @@ namespace Raven.Contrib.MVC.Session
         {
             using (var db = _store.OpenSession())
             {
-                db.Advanced.UseOptimisticConcurrency = true;
-
                 var sessionState = db.Query<Session>()
                                      .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
                                      .Single(x => x.SessionId == id && x.ApplicationName == ApplicationName && x.LockId == (int) lockId);
@@ -226,8 +222,6 @@ namespace Raven.Contrib.MVC.Session
         {
             using (var db = _store.OpenSession())
             {
-                db.Advanced.UseOptimisticConcurrency = true;
-
                 var sessionState = db.Query<Session>()
                                      .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
                                      .SingleOrDefault(x => x.SessionId == id && x.ApplicationName == ApplicationName && x.LockId == (int) lockId);
@@ -247,29 +241,20 @@ namespace Raven.Contrib.MVC.Session
         /// <param name="id">The session identifier.</param>
         public override void ResetItemTimeout(HttpContext context, string id)
         {
-            try
+            using (var db = _store.OpenSession())
             {
-                using (var db = _store.OpenSession())
+                var sessionState = db.Query<Session>()
+                                        .SingleOrDefault(x => x.SessionId == id && x.ApplicationName == ApplicationName);
+
+                if (sessionState != null)
                 {
-                    db.Advanced.UseOptimisticConcurrency = true;
+                    var expiry = DateTime.UtcNow.AddMinutes(_config.Timeout.TotalMinutes);
 
-                    var sessionState = db.Query<Session>()
-                                         .SingleOrDefault(x => x.SessionId == id && x.ApplicationName == ApplicationName);
+                    sessionState.Expires = expiry;
 
-                    if (sessionState != null)
-                    {
-                        var expiry = DateTime.UtcNow.AddMinutes(_config.Timeout.TotalMinutes);
-
-                        sessionState.Expires = expiry;
-
-                        db.Advanced.GetMetadataFor(sessionState)["Raven-Expiration-Date"] = new RavenJValue(expiry);
-                        db.SaveChanges();
-                    }
+                    db.Advanced.GetMetadataFor(sessionState)["Raven-Expiration-Date"] = new RavenJValue(expiry);
+                    db.SaveChanges();
                 }
-            }
-            catch (ConcurrencyException)
-            {
-                // Not fatal.
             }
         }
 
