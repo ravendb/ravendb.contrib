@@ -43,27 +43,9 @@ namespace Raven.Contrib.MVC.Auth
             }
 
             /// <summary>
-            /// The user's preferred username.
-            /// </summary>
-            public string UserName
-            {
-                get;
-                set;
-            }
-
-            /// <summary>
-            /// The user's email address.
-            /// </summary>
-            public string Email
-            {
-                get;
-                set;
-            }
-
-            /// <summary>
             /// The user's profile.
             /// </summary>
-            public IDictionary<string, object> Profile
+            public dynamic Profile
             {
                 get;
                 set;
