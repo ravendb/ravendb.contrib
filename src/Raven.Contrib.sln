@@ -20,6 +20,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Bundles.Contrib.Creat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Bundles.Contrib.Tests", "Raven.Bundles.Contrib.Tests\Raven.Bundles.Contrib.Tests.csproj", "{4AD66E7C-C303-4E2E-A7C0-8A6D886914DF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".ilmerge", ".ilmerge", "{F463B318-29F6-4006-8F94-7F0EAA087B67}"
+	ProjectSection(SolutionItems) = preProject
+		.ilmerge\Ilmerge.CSharp.targets = .ilmerge\Ilmerge.CSharp.targets
+		.ilmerge\ILMerge.exe = .ilmerge\ILMerge.exe
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Contrib.Utils.DBUtil", "Raven.Contrib.Utils.DBUtil\Raven.Contrib.Utils.DBUtil.csproj", "{22ECF425-9EB8-45C1-820E-B920106DCE12}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +58,10 @@ Global
 		{4AD66E7C-C303-4E2E-A7C0-8A6D886914DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4AD66E7C-C303-4E2E-A7C0-8A6D886914DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4AD66E7C-C303-4E2E-A7C0-8A6D886914DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22ECF425-9EB8-45C1-820E-B920106DCE12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22ECF425-9EB8-45C1-820E-B920106DCE12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22ECF425-9EB8-45C1-820E-B920106DCE12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22ECF425-9EB8-45C1-820E-B920106DCE12}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
