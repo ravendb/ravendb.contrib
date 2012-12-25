@@ -23,9 +23,28 @@ namespace Raven.Contrib.MVC.Session
     {
         private const int RetriesOnConcurrentConfictsDefault = 3;
 
-        private IDocumentStore _store;
         private SessionStateSection _config;
         private int _retries = RetriesOnConcurrentConfictsDefault;
+
+        private static bool _disposeStore = true;
+        private static IDocumentStore _store;
+
+        /// <summary>
+        /// The document store instance to use. If null, creates a new document store,
+        /// using the <c>connectionStringName</c> configuration option.
+        /// </summary>
+        public static IDocumentStore Store
+        {
+            get
+            {
+                return _store;
+            }
+            set
+            {
+                _store = value;
+                _disposeStore = false;
+            }
+        }
 
         /// <summary>
         /// Public parameterless constructor
@@ -82,10 +101,6 @@ namespace Raven.Contrib.MVC.Session
                 _store = new DocumentStore
                 {
                     ConnectionStringName = config["connectionStringName"],
-                    Conventions =
-                    {
-                        FindIdentityProperty = q => q.Name == "SessionId"
-                    }
                 };
 
                 _store.Initialize();
@@ -159,7 +174,7 @@ namespace Raven.Contrib.MVC.Session
                 {
                     sessionState = db.Query<Session>()
                                      .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
-                                     .SingleOrDefault(x => x.SessionId == id && x.ApplicationName == ApplicationName && x.Expires < DateTime.UtcNow);
+                                     .SingleOrDefault(x => x.Id == id && x.ApplicationName == ApplicationName && x.Expires < DateTime.UtcNow);
 
                     if (sessionState != null)
                         throw new InvalidOperationException(String.Format("Item aleady exist with SessionId=\"{0}\" and ApplicationName=\"{1}\"", id, lockId));
@@ -172,7 +187,7 @@ namespace Raven.Contrib.MVC.Session
                 {
                     sessionState = db.Query<Session>()
                                      .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
-                                     .Single(x => x.SessionId == id && x.ApplicationName == ApplicationName && x.LockId == (int) lockId);
+                                     .Single(x => x.Id == id && x.ApplicationName == ApplicationName && x.LockId == (int) lockId);
                 }
 
                 var expiry = DateTime.UtcNow.AddMinutes(_config.Timeout.TotalMinutes);
@@ -198,7 +213,7 @@ namespace Raven.Contrib.MVC.Session
             {
                 var sessionState = db.Query<Session>()
                                      .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
-                                     .Single(x => x.SessionId == id && x.ApplicationName == ApplicationName && x.LockId == (int) lockId);
+                                     .Single(x => x.Id == id && x.ApplicationName == ApplicationName && x.LockId == (int) lockId);
 
                 var expiry = DateTime.UtcNow.AddMinutes(_config.Timeout.TotalMinutes);
 
@@ -224,7 +239,7 @@ namespace Raven.Contrib.MVC.Session
             {
                 var sessionState = db.Query<Session>()
                                      .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
-                                     .SingleOrDefault(x => x.SessionId == id && x.ApplicationName == ApplicationName && x.LockId == (int) lockId);
+                                     .SingleOrDefault(x => x.Id == id && x.ApplicationName == ApplicationName && x.LockId == (int) lockId);
 
                 if (sessionState != null)
                 {
@@ -244,7 +259,7 @@ namespace Raven.Contrib.MVC.Session
             using (var db = _store.OpenSession())
             {
                 var sessionState = db.Query<Session>()
-                                        .SingleOrDefault(x => x.SessionId == id && x.ApplicationName == ApplicationName);
+                                        .SingleOrDefault(x => x.Id == id && x.ApplicationName == ApplicationName);
 
                 if (sessionState != null)
                 {
@@ -312,6 +327,7 @@ namespace Raven.Contrib.MVC.Session
         /// <param name="context">The HttpContext instance for the current request</param>
         public override void InitializeRequest(HttpContext context)
         {
+
         }
 
         /// <summary>
@@ -320,11 +336,12 @@ namespace Raven.Contrib.MVC.Session
         /// <param name="context">The HttpContext instance for the current request</param>
         public override void EndRequest(HttpContext context)
         {
+
         }
 
         public override void Dispose()
         {
-            if (_store != null)
+            if (_store != null && _disposeStore)
                 _store.Dispose();
         }
 
@@ -357,7 +374,7 @@ namespace Raven.Contrib.MVC.Session
 
                 var sessionState = db.Query<Session>()
                                      .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
-                                     .SingleOrDefault(x => x.SessionId == id && x.ApplicationName == ApplicationName);
+                                     .SingleOrDefault(x => x.Id == id && x.ApplicationName == ApplicationName);
 
                 if (sessionState == null)
                     return null;

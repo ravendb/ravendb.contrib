@@ -10,13 +10,13 @@ namespace Raven.Contrib.MVC.Session
     {
         public Session(string sessionId, string applicationName)
         {
-            SessionId       = sessionId;
+            Id              = sessionId;
             ApplicationName = applicationName;
             Created         = DateTime.UtcNow;
             SessionItems    = String.Empty;
         }
 
-        public string SessionId { get; set; }
+        public string Id { get; set; }
 
         public string ApplicationName { get; set; }
 
