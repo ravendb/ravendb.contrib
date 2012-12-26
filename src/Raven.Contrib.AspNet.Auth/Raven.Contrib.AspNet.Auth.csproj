@@ -83,9 +83,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="LICENSE.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Raven.Contrib.AspNet\Raven.Contrib.AspNet.csproj">
       <Project>{2f3fd484-bcdb-4559-a29e-7c88f1eadca6}</Project>
       <Name>Raven.Contrib.AspNet</Name>
