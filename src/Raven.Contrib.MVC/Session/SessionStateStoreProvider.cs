@@ -24,6 +24,7 @@ namespace Raven.Contrib.MVC.Session
         private const int RetriesOnConcurrentConfictsDefault = 3;
 
         private SessionStateSection _config;
+        private bool _locking = true;
         private int _retries = RetriesOnConcurrentConfictsDefault;
 
         private static bool _disposeStore = true;
@@ -47,7 +48,7 @@ namespace Raven.Contrib.MVC.Session
         }
 
         /// <summary>
-        /// Public parameterless constructor
+        /// Public parameterless constructor.
         /// </summary>
         public SessionStateStoreProvider()
         {
@@ -79,6 +80,14 @@ namespace Raven.Contrib.MVC.Session
                 name = "RavenSessionStateStore";
 
             base.Initialize(name, config);
+
+            if (config["lockSession"] != null)
+            {
+                bool lockSession;
+
+                if (Boolean.TryParse(config["lockSession"], out lockSession))
+                    _locking = lockSession;
+            }
 
             if (config["retriesOnConcurrentConflicts"] != null)
             {
@@ -177,7 +186,7 @@ namespace Raven.Contrib.MVC.Session
                                      .SingleOrDefault(x => x.Id == id && x.ApplicationName == ApplicationName && x.Expires < DateTime.UtcNow);
 
                     if (sessionState != null)
-                        throw new InvalidOperationException(String.Format("Item aleady exist with SessionId=\"{0}\" and ApplicationName=\"{1}\"", id, lockId));
+                        throw new InvalidOperationException(String.Format("Item aleady exist with SessionId=\"{0}\" and ApplicationName=\"{1}\"", id, ApplicationName));
 
                     sessionState = new Session(id, ApplicationName);
 
@@ -185,9 +194,11 @@ namespace Raven.Contrib.MVC.Session
                 }
                 else
                 {
-                    sessionState = db.Query<Session>()
-                                     .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
-                                     .Single(x => x.Id == id && x.ApplicationName == ApplicationName && x.LockId == (int) lockId);
+                    var query = db.Query<Session>()
+                                  .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
+                                  .Where(x => x.Id == id && x.ApplicationName == ApplicationName);
+
+                    sessionState = _locking ? query.Single(x => x.LockId == (int)lockId) : query.Single();
                 }
 
                 var expiry = DateTime.UtcNow.AddMinutes(_config.Timeout.TotalMinutes);
@@ -211,9 +222,11 @@ namespace Raven.Contrib.MVC.Session
         {
             using (var db = _store.OpenSession())
             {
-                var sessionState = db.Query<Session>()
-                                     .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
-                                     .Single(x => x.Id == id && x.ApplicationName == ApplicationName && x.LockId == (int) lockId);
+                var query = db.Query<Session>()
+                              .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
+                              .Where(x => x.Id == id && x.ApplicationName == ApplicationName);
+
+                var sessionState = _locking ? query.Single(x => x.LockId == (int)lockId) : query.Single();
 
                 var expiry = DateTime.UtcNow.AddMinutes(_config.Timeout.TotalMinutes);
 
@@ -237,9 +250,11 @@ namespace Raven.Contrib.MVC.Session
         {
             using (var db = _store.OpenSession())
             {
-                var sessionState = db.Query<Session>()
-                                     .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
-                                     .SingleOrDefault(x => x.Id == id && x.ApplicationName == ApplicationName && x.LockId == (int) lockId);
+                var query = db.Query<Session>()
+                              .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
+                              .Where(x => x.Id == id && x.ApplicationName == ApplicationName);
+
+                var sessionState = _locking ? query.Single(x => x.LockId == (int)lockId) : query.Single();
 
                 if (sessionState != null)
                 {
@@ -259,7 +274,7 @@ namespace Raven.Contrib.MVC.Session
             using (var db = _store.OpenSession())
             {
                 var sessionState = db.Query<Session>()
-                                        .SingleOrDefault(x => x.Id == id && x.ApplicationName == ApplicationName);
+                                     .SingleOrDefault(x => x.Id == id && x.ApplicationName == ApplicationName);
 
                 if (sessionState != null)
                 {
@@ -369,7 +384,7 @@ namespace Raven.Contrib.MVC.Session
 
             using (var db = _store.OpenSession())
             {
-                db.Advanced.UseOptimisticConcurrency = true;
+                db.Advanced.UseOptimisticConcurrency         = _locking;
                 db.Advanced.AllowNonAuthoritativeInformation = false;
 
                 var sessionState = db.Query<Session>()
@@ -380,7 +395,7 @@ namespace Raven.Contrib.MVC.Session
                     return null;
 
                 // Abort if locked.
-                if (sessionState.Locked)
+                if (_locking && sessionState.Locked)
                 {
                     locked  = true;
                     lockAge = DateTime.UtcNow.Subtract(sessionState.LockDate);
@@ -406,10 +421,10 @@ namespace Raven.Contrib.MVC.Session
                     return null;
                 }
 
-                if (lockRecord)
+                if (_locking && lockRecord)
                 {
                     sessionState.Locked   = true;
-                    sessionState.LockId += 1;
+                    sessionState.LockId  += 1;
                     sessionState.LockDate = DateTime.UtcNow;
 
                     try
