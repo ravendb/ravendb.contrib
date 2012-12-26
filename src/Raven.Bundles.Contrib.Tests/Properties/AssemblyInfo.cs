@@ -1,11 +1,11 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("Raven.Client.Contrib.Profiling")]
-[assembly: AssemblyDescription("MiniProfiler for RavenDB")]
+[assembly: AssemblyTitle("Raven.Bundles.Contrib.Tests")]
+[assembly: AssemblyDescription("Tests for Contrib Bundles.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Raven.Client.Contrib.Profiling")]
+[assembly: AssemblyProduct("Raven.Bundles.Contrib.Tests")]
 [assembly: AssemblyCopyright("Copyright © 2012 - RavenDB Community Members")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
