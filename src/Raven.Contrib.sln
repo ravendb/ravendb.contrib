@@ -14,8 +14,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Client.Contrib.Tests"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Client.Contrib.Profiling", "Raven.Client.Contrib.Profiling\Raven.Client.Contrib.Profiling.csproj", "{D3FE3CF5-DC6A-49DF-9F31-A4A74101FEAD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Contrib.MVC", "Raven.Contrib.MVC\Raven.Contrib.MVC.csproj", "{F5AAEA0D-6ECE-4195-AD3F-43BD8010834A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Bundles.Contrib.CreatedDate", "Raven.Bundles.Contrib.CreatedDate\Raven.Bundles.Contrib.CreatedDate.csproj", "{0899BDDD-E10D-4140-B27D-48356DAD8E04}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Bundles.Contrib.Tests", "Raven.Bundles.Contrib.Tests\Raven.Bundles.Contrib.Tests.csproj", "{4AD66E7C-C303-4E2E-A7C0-8A6D886914DF}"
@@ -27,6 +25,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".ilmerge", ".ilmerge", "{F4
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Contrib.Utils.DBUtil", "Raven.Contrib.Utils.DBUtil\Raven.Contrib.Utils.DBUtil.csproj", "{22ECF425-9EB8-45C1-820E-B920106DCE12}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Contrib.AspNet", "Raven.Contrib.AspNet\Raven.Contrib.AspNet.csproj", "{2F3FD484-BCDB-4559-A29E-7C88F1EADCA6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Contrib.AspNet.Auth", "Raven.Contrib.AspNet.Auth\Raven.Contrib.AspNet.Auth.csproj", "{27D7D54C-C9E1-4939-98EC-7C83A83503E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Contrib.AspNet.Auth.Providers", "Raven.Contrib.AspNet.Auth.Providers\Raven.Contrib.AspNet.Auth.Providers.csproj", "{9D47B9CB-6DD6-4A71-82A9-9A218C8A40AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Contrib.AspNet.Session", "Raven.Contrib.AspNet.Session\Raven.Contrib.AspNet.Session.csproj", "{DDD21510-D927-4D11-B6AC-2421C8DFA0F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,10 +52,6 @@ Global
 		{D3FE3CF5-DC6A-49DF-9F31-A4A74101FEAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3FE3CF5-DC6A-49DF-9F31-A4A74101FEAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3FE3CF5-DC6A-49DF-9F31-A4A74101FEAD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F5AAEA0D-6ECE-4195-AD3F-43BD8010834A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F5AAEA0D-6ECE-4195-AD3F-43BD8010834A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F5AAEA0D-6ECE-4195-AD3F-43BD8010834A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F5AAEA0D-6ECE-4195-AD3F-43BD8010834A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0899BDDD-E10D-4140-B27D-48356DAD8E04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0899BDDD-E10D-4140-B27D-48356DAD8E04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0899BDDD-E10D-4140-B27D-48356DAD8E04}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -62,6 +64,22 @@ Global
 		{22ECF425-9EB8-45C1-820E-B920106DCE12}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22ECF425-9EB8-45C1-820E-B920106DCE12}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22ECF425-9EB8-45C1-820E-B920106DCE12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F3FD484-BCDB-4559-A29E-7C88F1EADCA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F3FD484-BCDB-4559-A29E-7C88F1EADCA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F3FD484-BCDB-4559-A29E-7C88F1EADCA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F3FD484-BCDB-4559-A29E-7C88F1EADCA6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27D7D54C-C9E1-4939-98EC-7C83A83503E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27D7D54C-C9E1-4939-98EC-7C83A83503E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27D7D54C-C9E1-4939-98EC-7C83A83503E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27D7D54C-C9E1-4939-98EC-7C83A83503E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D47B9CB-6DD6-4A71-82A9-9A218C8A40AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D47B9CB-6DD6-4A71-82A9-9A218C8A40AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D47B9CB-6DD6-4A71-82A9-9A218C8A40AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D47B9CB-6DD6-4A71-82A9-9A218C8A40AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDD21510-D927-4D11-B6AC-2421C8DFA0F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDD21510-D927-4D11-B6AC-2421C8DFA0F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDD21510-D927-4D11-B6AC-2421C8DFA0F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDD21510-D927-4D11-B6AC-2421C8DFA0F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
