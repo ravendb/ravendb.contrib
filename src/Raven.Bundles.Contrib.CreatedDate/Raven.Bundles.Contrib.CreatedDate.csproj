@@ -33,12 +33,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Raven.Abstractions">
-      <HintPath>..\packages\RavenDB.Database.2.0.2175-Unstable\lib\net40\Raven.Abstractions.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\packages\RavenDB.Database.2.0.2186-Unstable\lib\net40\Raven.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Raven.Database">
-      <HintPath>..\packages\RavenDB.Database.2.0.2175-Unstable\lib\net40\Raven.Database.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\packages\RavenDB.Database.2.0.2186-Unstable\lib\net40\Raven.Database.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
