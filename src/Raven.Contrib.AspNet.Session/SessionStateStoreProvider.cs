@@ -52,7 +52,7 @@ namespace Raven.Contrib.AspNet.Session
         /// </summary>
         public SessionStateStoreProvider()
         {
-            
+
         }
 
         /// <summary>
@@ -81,12 +81,12 @@ namespace Raven.Contrib.AspNet.Session
 
             base.Initialize(name, config);
 
-            if (config["lockSession"] != null)
+            if (config["disableLock"] != null)
             {
-                bool lockSession;
+                bool disableLock;
 
-                if (Boolean.TryParse(config["lockSession"], out lockSession))
-                    _locking = lockSession;
+                if (Boolean.TryParse(config["disableLock"], out disableLock))
+                    _locking = !disableLock;
             }
 
             if (config["retriesOnConcurrentConflicts"] != null)
