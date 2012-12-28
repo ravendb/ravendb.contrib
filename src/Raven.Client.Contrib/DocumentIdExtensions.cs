@@ -145,8 +145,9 @@ namespace Raven.Client
 
             // Generate an ID using the commands and conventions from the current session
             var conventions = session.DocumentStore.Conventions;
+            var databaseName = session.GetDatabaseName();
             var databaseCommands = session.GetDatabaseCommands();
-            return conventions.GenerateDocumentKey(databaseCommands, entity);
+            return conventions.GenerateDocumentKey(databaseName, databaseCommands, entity);
         }
     }
 }

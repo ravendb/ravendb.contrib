@@ -34,23 +34,23 @@
   <ItemGroup>
     <Reference Include="Raven.Abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=37f41c7f99471593, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\RavenDB.Client.2.0.2181-Unstable\lib\net40\Raven.Abstractions.dll</HintPath>
+      <HintPath>..\packages\RavenDB.Client.2.0.2186-Unstable\lib\net40\Raven.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Raven.Client.Embedded, Version=2.0.0.0, Culture=neutral, PublicKeyToken=37f41c7f99471593, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\RavenDB.Embedded.2.0.2181-Unstable\lib\net40\Raven.Client.Embedded.dll</HintPath>
+      <HintPath>..\packages\RavenDB.Embedded.2.0.2186-Unstable\lib\net40\Raven.Client.Embedded.dll</HintPath>
     </Reference>
     <Reference Include="Raven.Client.Lightweight, Version=2.0.0.0, Culture=neutral, PublicKeyToken=37f41c7f99471593, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\RavenDB.Client.2.0.2181-Unstable\lib\net40\Raven.Client.Lightweight.dll</HintPath>
+      <HintPath>..\packages\RavenDB.Client.2.0.2186-Unstable\lib\net40\Raven.Client.Lightweight.dll</HintPath>
     </Reference>
     <Reference Include="Raven.Database, Version=2.0.0.0, Culture=neutral, PublicKeyToken=37f41c7f99471593, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\RavenDB.Database.2.0.2181-Unstable\lib\net40\Raven.Database.dll</HintPath>
+      <HintPath>..\packages\RavenDB.Database.2.0.2186-Unstable\lib\net40\Raven.Database.dll</HintPath>
     </Reference>
     <Reference Include="Raven.Tests.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=37f41c7f99471593, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\RavenDB.Tests.Helpers.2.0.2181-Unstable\lib\net40\Raven.Tests.Helpers.dll</HintPath>
+      <HintPath>..\packages\RavenDB.Tests.Helpers.2.0.2186-Unstable\lib\net40\Raven.Tests.Helpers.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -61,6 +61,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="ClockDocs\ClockDocsTests.cs" />
+    <Compile Include="ClockDocs\ClockDocUsageTests.cs" />
     <Compile Include="CreatedDate\CreatedDateTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -68,9 +73,17 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Raven.Bundles.Contrib.ClockDocs\Raven.Bundles.Contrib.ClockDocs.csproj">
+      <Project>{2F767704-A081-4AA5-9E0C-B937B57351E4}</Project>
+      <Name>Raven.Bundles.Contrib.ClockDocs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Raven.Bundles.Contrib.CreatedDate\Raven.Bundles.Contrib.CreatedDate.csproj">
       <Project>{0899bddd-e10d-4140-b27d-48356dad8e04}</Project>
       <Name>Raven.Bundles.Contrib.CreatedDate</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Raven.Client.Bundles.Contrib.ClockDocs\Raven.Client.Bundles.Contrib.ClockDocs.csproj">
+      <Project>{1350de5e-18c5-44b7-bee2-61d86c76cbe1}</Project>
+      <Name>Raven.Client.Bundles.Contrib.ClockDocs</Name>
     </ProjectReference>
     <ProjectReference Include="..\Raven.Client.Contrib.Tests\Raven.Client.Contrib.Tests.csproj">
       <Project>{eb6eef13-35d9-4b1f-8db4-6645288d1d75}</Project>
