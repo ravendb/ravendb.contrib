@@ -64,6 +64,8 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="ClockDocs\ClockDocsTests.cs" />
+    <Compile Include="ClockDocs\ClockDocUsageTests.cs" />
     <Compile Include="CreatedDate\CreatedDateTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -71,9 +73,17 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Raven.Bundles.Contrib.ClockDocs\Raven.Bundles.Contrib.ClockDocs.csproj">
+      <Project>{2F767704-A081-4AA5-9E0C-B937B57351E4}</Project>
+      <Name>Raven.Bundles.Contrib.ClockDocs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Raven.Bundles.Contrib.CreatedDate\Raven.Bundles.Contrib.CreatedDate.csproj">
       <Project>{0899bddd-e10d-4140-b27d-48356dad8e04}</Project>
       <Name>Raven.Bundles.Contrib.CreatedDate</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Raven.Client.Bundles.Contrib.ClockDocs\Raven.Client.Bundles.Contrib.ClockDocs.csproj">
+      <Project>{1350de5e-18c5-44b7-bee2-61d86c76cbe1}</Project>
+      <Name>Raven.Client.Bundles.Contrib.ClockDocs</Name>
     </ProjectReference>
     <ProjectReference Include="..\Raven.Client.Contrib.Tests\Raven.Client.Contrib.Tests.csproj">
       <Project>{eb6eef13-35d9-4b1f-8db4-6645288d1d75}</Project>

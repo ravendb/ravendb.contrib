@@ -47,6 +47,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".shared", ".shared", "{0413
 		SharedAssemblyInfo.cs = SharedAssemblyInfo.cs
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Bundles.Contrib.ClockDocs", "Raven.Bundles.Contrib.ClockDocs\Raven.Bundles.Contrib.ClockDocs.csproj", "{2F767704-A081-4AA5-9E0C-B937B57351E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Client.Bundles.Contrib.ClockDocs", "Raven.Client.Bundles.Contrib.ClockDocs\Raven.Client.Bundles.Contrib.ClockDocs.csproj", "{1350DE5E-18C5-44B7-BEE2-61D86C76CBE1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +97,14 @@ Global
 		{DDD21510-D927-4D11-B6AC-2421C8DFA0F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DDD21510-D927-4D11-B6AC-2421C8DFA0F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DDD21510-D927-4D11-B6AC-2421C8DFA0F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F767704-A081-4AA5-9E0C-B937B57351E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F767704-A081-4AA5-9E0C-B937B57351E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F767704-A081-4AA5-9E0C-B937B57351E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F767704-A081-4AA5-9E0C-B937B57351E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1350DE5E-18C5-44B7-BEE2-61D86C76CBE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1350DE5E-18C5-44B7-BEE2-61D86C76CBE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1350DE5E-18C5-44B7-BEE2-61D86C76CBE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1350DE5E-18C5-44B7-BEE2-61D86C76CBE1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -100,6 +112,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{0899BDDD-E10D-4140-B27D-48356DAD8E04} = {814F83B4-3FDB-4D06-9571-91744FC53257}
 		{4AD66E7C-C303-4E2E-A7C0-8A6D886914DF} = {814F83B4-3FDB-4D06-9571-91744FC53257}
+		{2F767704-A081-4AA5-9E0C-B937B57351E4} = {814F83B4-3FDB-4D06-9571-91744FC53257}
+		{1350DE5E-18C5-44B7-BEE2-61D86C76CBE1} = {814F83B4-3FDB-4D06-9571-91744FC53257}
 		{AA6FAC9A-000D-4A61-9B76-479EB4D769AD} = {E4798556-67B5-4FDB-96CD-4B0EB3759B99}
 		{D3FE3CF5-DC6A-49DF-9F31-A4A74101FEAD} = {E4798556-67B5-4FDB-96CD-4B0EB3759B99}
 		{EB6EEF13-35D9-4B1F-8DB4-6645288D1D75} = {E4798556-67B5-4FDB-96CD-4B0EB3759B99}
