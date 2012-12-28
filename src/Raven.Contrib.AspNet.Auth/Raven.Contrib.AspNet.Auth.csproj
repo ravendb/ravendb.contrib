@@ -46,6 +46,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
@@ -78,6 +79,7 @@
     <Compile Include="InvalidPasswordResetTokenException.cs" />
     <Compile Include="InvalidUserNameException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RoleProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
