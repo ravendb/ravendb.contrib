@@ -51,6 +51,9 @@ namespace Raven.Bundles.Contrib.Tests.ClockDocs
 
         public static void GenerateRandomOrders(IDocumentStore documentStore, int numOrders, DateTime starting, DateTime ending)
         {
+            starting = starting.ToUniversalTime();
+            ending = ending.ToUniversalTime();
+
             using (var session = documentStore.OpenSession())
             {
                 var names = new[]
@@ -110,7 +113,7 @@ namespace Raven.Bundles.Contrib.Tests.ClockDocs
                 Map = orders => from order in orders
                                 let now = LoadDocument<Clock>("Raven/Clocks/EveryHour").UtcTime
                                 let age = now - order.Placed
-                                where age.Days <= 30
+                                where age.TotalDays <= 30
                                 select new
                                        {
                                            order.CustomerId,
