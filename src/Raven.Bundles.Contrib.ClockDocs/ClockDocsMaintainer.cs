@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Raven.Abstractions;
+using Raven.Abstractions.Data;
 using Raven.Abstractions.Extensions;
 using Raven.Database;
 using Raven.Database.Plugins;
@@ -101,7 +102,9 @@ namespace Raven.Bundles.ClockDocs
 
             using (_database.DisableAllTriggersForCurrentThread())
             {
-                _database.Put(id, null, RavenJObject.FromObject(clock), new RavenJObject(), null);
+                var document = RavenJObject.FromObject(clock);
+                var metadata = new RavenJObject { { Constants.NotForReplication, true } };
+                _database.Put(id, null, document, metadata, null);
             }
         }
     }
