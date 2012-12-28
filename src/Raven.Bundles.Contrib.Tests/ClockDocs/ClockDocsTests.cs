@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
 using Raven.Abstractions;
 using Raven.Client.Bundles.ClockDocs;
 using Raven.Database.Config;
