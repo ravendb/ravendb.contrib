@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Configuration;
-using System.Web.Hosting;
 using System.Web.SessionState;
 using Raven.Abstractions.Exceptions;
 using Raven.Client;
@@ -17,22 +16,38 @@ using Raven.Json.Linq;
 namespace Raven.Contrib.AspNet.Session
 {
     /// <summary>
-    /// Session state store provider for RavenDB. Based on: https://github.com/mjrichardson/RavenDbSessionStateStoreProvider
+    /// Session state store provider for RavenDB.
     /// </summary>
+    /// 
+    /// <remarks>
+    /// The following configuration options can be specified:
+    /// 
+    ///   disableLock          = Disables locking on the session data.
+    ///                          Defaults to false. Recommended setting to true.
+    /// 
+    ///   conflictRetries      = The number of retries on conflicts.
+    ///                          Defaults to 3.
+    /// 
+    ///   connectionStringName = The name of the connection string to use.
+    ///                          Optional if a document store is provided manually.
+    /// 
+    /// Due to the usage of RavenDB's Expiration bundle, this provider does not
+    /// support the item expiration callback.
+    /// </remarks>
     public class SessionStateStoreProvider : SessionStateStoreProviderBase, IDisposable
     {
-        private const int RetriesOnConcurrentConfictsDefault = 3;
+        private IDocumentSession    _db;
 
-        private SessionStateSection _config;
+        private int _retries  = 3;
         private bool _locking = true;
-        private int _retries = RetriesOnConcurrentConfictsDefault;
 
-        private static bool _disposeStore = true;
+        private static int _timeout;
         private static IDocumentStore _store;
+        private static bool _disposeStore = true;
 
         /// <summary>
-        /// The document store instance to use. If null, creates a new document store,
-        /// using the <c>connectionStringName</c> configuration option.
+        /// The document store to use. If null, creates a new document store, using the
+        /// <c>connectionStringName</c> configuration option.
         /// </summary>
         public static IDocumentStore Store
         {
@@ -42,65 +57,59 @@ namespace Raven.Contrib.AspNet.Session
             }
             set
             {
-                _store = value;
+                _store        = value;
                 _disposeStore = false;
             }
         }
 
         /// <summary>
-        /// Public parameterless constructor.
+        /// Creates a new instance of <see cref="SessionStateStoreProvider"/>.
         /// </summary>
         public SessionStateStoreProvider()
         {
-            
+
         }
 
         /// <summary>
-        /// Constructor accepting a document store instance, used for testing.
+        /// Creates a new instance of <see cref="SessionStateStoreProvider"/>,
+        /// using the specified <see cref="Raven.Client.IDocumentStore"/>.
         /// </summary>
         public SessionStateStoreProvider(IDocumentStore documentStore)
         {
-            _store = documentStore;
+            Store = documentStore;
         }
 
         /// <summary>
-        /// The name of the application.
-        /// Session-data items will be stored against this name.
-        /// If not set, defaults to System.Web.Hosting.HostingEnvironment.ApplicationVirtualPath
+        /// Initializes the session state store provider.
         /// </summary>
-        public string ApplicationName
-        {
-            get;
-            set;
-        }
-
+        /// 
+        /// <param name="name">
+        /// The friendly name of the provider.
+        /// </param>
+        /// 
+        /// <param name="config">
+        /// A collection of the name/value pairs representing the provider-specific attributes
+        /// specified in the configuration for this provider.
+        /// </param>
         public override void Initialize(string name, NameValueCollection config)
         {
-            if (String.IsNullOrEmpty(name))
-                name = "RavenSessionStateStore";
-
             base.Initialize(name, config);
 
-            if (config["lockSession"] != null)
+            if (config["disableLock"] != null)
             {
-                bool lockSession;
+                bool disableLock;
 
-                if (Boolean.TryParse(config["lockSession"], out lockSession))
-                    _locking = lockSession;
+                if (Boolean.TryParse(config["disableLock"], out disableLock))
+                    _locking = !disableLock;
             }
 
-            if (config["retriesOnConcurrentConflicts"] != null)
+            if (config["conflictRetries"] != null)
             {
-                int retriesOnConcurrentConflicts;
+                int conflictRetries;
 
-                if (Int32.TryParse(config["retriesOnConcurrentConflicts"], out retriesOnConcurrentConflicts))
-                    _retries = retriesOnConcurrentConflicts;
+                if (Int32.TryParse(config["conflictRetries"], out conflictRetries))
+                    _retries = conflictRetries;
             }
-
-            if (String.IsNullOrEmpty(ApplicationName))
-                ApplicationName = HostingEnvironment.ApplicationVirtualPath;
-
-            _config = (SessionStateSection)WebConfigurationManager.GetSection("system.web/sessionState");
 
             if (_store == null)
             {
@@ -114,22 +123,180 @@ namespace Raven.Contrib.AspNet.Session
 
                 _store.Initialize();
             }
+
+            var sessionConfig = (SessionStateSection) WebConfigurationManager.GetSection("system.web/sessionState");
+            _timeout          = (int) sessionConfig.Timeout.TotalMinutes;
         }
 
         /// <summary>
-        /// Retrieves session values and information from the session data store and locks the session-item data 
-        /// at the data store for the duration of the request. 
+        /// Called by the <see cref="System.Web.SessionState.SessionStateModule"/> object for
+        /// per-request initialization.
         /// </summary>
-        /// <param name="context">The HttpContext instance for the current request</param>
-        /// <param name="id">The session identifier.</param>
-        /// <param name="locked">An output parameter indicating whether the item is currently exclusively locked.</param>
-        /// <param name="lockAge">The age of the exclusive lock (if present)</param>
-        /// <param name="lockId">The identifier of the exclusive lock (if present)</param>
-        /// <param name="actions">Used with sessions whose Cookieless property is true, 
-        /// when the regenerateExpiredSessionId attribute is set to true. 
-        /// An actionFlags value set to InitializeItem (1) indicates that the entry in the session data store is a 
-        /// new session that requires initialization.</param>
-        /// <returns>The session data</returns>
+        /// 
+        /// <param name="context">
+        /// The <see cref="System.Web.HttpContext"/> for the current request.
+        /// </param>
+        public override void InitializeRequest(HttpContext context)
+        {
+            _db = _store.OpenSession();
+        }
+
+        /// <summary>
+        /// Called by the <see cref="System.Web.SessionState.SessionStateModule"/> object at the end
+        /// of a request.
+        /// </summary>
+        /// 
+        /// <param name="context">
+        /// The <see cref="System.Web.HttpContext"/> for the current request.
+        /// </param>
+        public override void EndRequest(HttpContext context)
+        {
+            _db.Dispose();
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting
+        /// unmanaged resources.
+        /// </summary>
+        public override void Dispose()
+        {
+            if (_store != null && _disposeStore)
+                _store.Dispose();
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="System.Web.SessionState.SessionStateStoreData"/> object to be used
+        /// for the current request.
+        /// </summary>
+        /// 
+        /// <param name="context">
+        /// The <see cref="System.Web.HttpContext"/> for the current request.
+        /// </param>
+        /// 
+        /// <param name="timeout">
+        /// The timeout value for the new <see cref="System.Web.SessionState.SessionStateStoreData"/>.
+        /// </param>
+        /// 
+        /// <returns>
+        /// A new <see cref="System.Web.SessionState.SessionStateStoreData"/> for the current request.
+        /// </returns>
+        public override SessionStateStoreData CreateNewStoreData(HttpContext context, int timeout)
+        {
+            var items   = new SessionStateItemCollection();
+            var objects = SessionStateUtility.GetSessionStaticObjects(context);
+
+            return new SessionStateStoreData(items, objects, timeout);
+        }
+
+        /// <summary>
+        /// Adds a new session-state item to the data store.
+        /// </summary>
+        /// 
+        /// <param name="context">
+        /// The <see cref="System.Web.HttpContext"/> for the current request.
+        /// </param>
+        /// 
+        /// <param name="id">
+        /// The session identifier for the current request.
+        /// </param>
+        /// 
+        /// <param name="timeout">
+        /// The timeout for the current request.
+        /// </param>
+        public override void CreateUninitializedItem(HttpContext context, string id, int timeout)
+        {
+            var session = new Session
+            {
+                Id      = id,
+                Expires = DateTime.UtcNow.AddMinutes(timeout)
+            };
+
+            _db.Store(session);
+            _db.Advanced.GetMetadataFor(session)["Raven-Expiration-Date"] = new RavenJValue(session.Expires);
+            _db.SaveChanges();
+        }
+
+        /// <summary>
+        /// Returns read-only session-state data from the session data store.
+        /// </summary>
+        /// 
+        /// <param name="context">
+        /// The <see cref="System.Web.HttpContext"/> for the current request.
+        /// </param>
+        /// 
+        /// <param name="id">
+        /// The session identifier for the current request.
+        /// </param>
+        /// 
+        /// <param name="locked">
+        /// When this method returns, contains a Boolean value that is set to true if the requested
+        /// session item is locked at the session data store; otherwise, false.
+        /// </param>
+        /// 
+        /// <param name="lockAge">
+        /// When this method returns, contains a System.TimeSpan object that is set to the amount of time
+        /// that an item in the session data store has been locked.
+        /// </param>
+        /// 
+        /// <param name="lockId">
+        /// When this method returns, contains an object that is set to the lock identifier for the current
+        /// request. For details on the lock identifier, see "Locking Session-Store Data" in the
+        /// <see cref="System.Web.SessionState.SessionStateStoreProviderBase"/> class summary.
+        /// </param>
+        /// 
+        /// <param name="actions">
+        /// When this method returns, contains one of the <see cref="System.Web.SessionState.SessionStateActions"/>
+        /// values, indicating whether the current session is an uninitialized, cookieless session.
+        /// </param>
+        /// 
+        /// <returns>
+        /// A <see cref="System.Web.SessionState.SessionStateStoreData"/> populated with session values
+        /// and information from the session data store.
+        /// </returns>
+        public override SessionStateStoreData GetItem(HttpContext context, string id, out bool locked,
+                                                      out TimeSpan lockAge, out object lockId,
+                                                      out SessionStateActions actions)
+        {
+            return GetSessionStoreItem(false, context, id, 0, out locked, out lockAge, out lockId, out actions);
+        }
+
+        /// <summary>
+        /// Returns read-only session-state data from the session data store.
+        /// </summary>
+        /// 
+        /// <param name="context">
+        /// The <see cref="System.Web.HttpContext"/> for the current request.
+        /// </param>
+        /// 
+        /// <param name="id">
+        /// The session identifier for the current request.
+        /// </param>
+        /// 
+        /// <param name="locked">
+        /// When this method returns, contains a Boolean value that is set to true if a lock is
+        /// successfully obtained; otherwise, false.
+        /// </param>
+        /// 
+        /// <param name="lockAge">
+        /// When this method returns, contains a System.TimeSpan object that is set to the amount of time
+        /// that an item in the session data store has been locked.
+        /// </param>
+        /// 
+        /// <param name="lockId">
+        /// When this method returns, contains an object that is set to the lock identifier for the current
+        /// request. For details on the lock identifier, see "Locking Session-Store Data" in the
+        /// <see cref="System.Web.SessionState.SessionStateStoreProviderBase"/> class summary.
+        /// </param>
+        /// 
+        /// <param name="actions">
+        /// When this method returns, contains one of the <see cref="System.Web.SessionState.SessionStateActions"/>
+        /// values, indicating whether the current session is an uninitialized, cookieless session.
+        /// </param>
+        /// 
+        /// <returns>
+        /// A <see cref="System.Web.SessionState.SessionStateStoreData"/> populated with session values
+        /// and information from the session data store.
+        /// </returns>
         public override SessionStateStoreData GetItemExclusive(HttpContext context,
                                                                string id,
                                                                out bool locked,
@@ -141,232 +308,161 @@ namespace Raven.Contrib.AspNet.Session
         }
 
         /// <summary>
-        /// This method performs the same work as the GetItemExclusive method, except that it does not attempt to lock the session item in the data store.
+        /// Updates the session-item information in the session-state data store with values from the current
+        /// request, and clears the lock on the data.
         /// </summary>
-        /// <param name="context">The HttpContext instance for the current request</param>
-        /// <param name="id">The session identifier.</param>
-        /// <param name="locked">An output parameter indicating whether the item is currently exclusively locked.</param>
-        /// <param name="lockAge">The age of the exclusive lock (if present)</param>
-        /// <param name="lockId">The identifier of the exclusive lock (if present)</param>
-        /// <param name="actions">Used with sessions whose Cookieless property is true, 
-        /// when the regenerateExpiredSessionId attribute is set to true. 
-        /// An actionFlags value set to InitializeItem (1) indicates that the entry in the session data store is a 
-        /// new session that requires initialization.</param>
-        /// <returns>The session data</returns>
-        public override SessionStateStoreData GetItem(HttpContext context, string id, out bool locked,
-                                                      out TimeSpan lockAge, out object lockId,
-                                                      out SessionStateActions actions)
-        {
-            return GetSessionStoreItem(false, context, id, 0, out locked, out lockAge, out lockId, out actions);
-        }
-
-        /// <summary>
-        /// If the newItem parameter is true, the SetAndReleaseItemExclusive method inserts a new item into the data store with the supplied values. 
-        /// Otherwise, the existing item in the data store is updated with the supplied values, and any lock on the data is released. 
-        /// </summary>
-        /// <param name="context">The HttpContext instance for the current request</param>
-        /// <param name="id">The session identifier.</param>
-        /// <param name="item">The current session values to be stored</param>
-        /// <param name="lockId">The lock identifier for the current request.</param>
-        /// <param name="newItem">If true, a new item is inserted into the store.  Otherwise, the existing item in 
-        /// the data store is updated with the supplied values, and any lock on the data is released. </param>
+        /// 
+        /// <param name="context">
+        /// The <see cref="System.Web.HttpContext"/> for the current request.
+        /// </param>
+        /// 
+        /// <param name="id">
+        /// The session identifier for the current request.
+        /// </param>
+        /// 
+        /// <param name="item">
+        /// The <see cref="System.Web.SessionState.SessionStateStoreData"/> object that contains the current
+        /// session values to be stored.
+        /// </param>
+        /// 
+        /// <param name="lockId">
+        /// The lock identifier for the current request.
+        /// </param>
+        /// 
+        /// <param name="newItem">
+        /// true to identify the session item as a new item; false to identify the session item as an
+        /// existing item.
+        /// </param>
         public override void SetAndReleaseItemExclusive(HttpContext context, string id, SessionStateStoreData item,
                                                         object lockId, bool newItem)
         {
-            var serializedItems = Serialize((SessionStateItemCollection)item.Items);
+            var session = newItem ? new Session { Id = id } : _db.Load<Session>(id);
 
-            using (var db = _store.OpenSession())
-            {
-                Session sessionState;
+            if (session == null)
+                return;
 
-                if (newItem)
-                {
-                    sessionState = db.Query<Session>()
-                                     .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
-                                     .SingleOrDefault(x => x.Id == id && x.ApplicationName == ApplicationName && x.Expires < DateTime.UtcNow);
+            if (_locking && session.Locked && session.LockId != (Guid) lockId)
+                return;
 
-                    if (sessionState != null)
-                        throw new InvalidOperationException(String.Format("Item aleady exist with SessionId=\"{0}\" and ApplicationName=\"{1}\"", id, ApplicationName));
+            session.Locked       = false;
+            session.SessionItems = Serialize((SessionStateItemCollection) item.Items);
 
-                    sessionState = new Session(id, ApplicationName);
-
-                    db.Store(sessionState);
-                }
-                else
-                {
-                    var query = db.Query<Session>()
-                                  .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
-                                  .Where(x => x.Id == id && x.ApplicationName == ApplicationName);
-
-                    sessionState = _locking ? query.Single(x => x.LockId == (int)lockId) : query.Single();
-                }
-
-                var expiry = DateTime.UtcNow.AddMinutes(_config.Timeout.TotalMinutes);
-
-                sessionState.Expires      = expiry;
-                sessionState.SessionItems = serializedItems;
-                sessionState.Locked       = false;
-
-                db.Advanced.GetMetadataFor(sessionState)["Raven-Expiration-Date"] = new RavenJValue(expiry);
-                db.SaveChanges();
-            }
+            _db.Store(session);
+            _db.SaveChanges();
         }
 
         /// <summary>
-        /// Releases the lock on an item in the session data store.
+        /// Releases a lock on an item in the session data store.
         /// </summary>
-        /// <param name="context">The HttpContext instance for the current request</param>
-        /// <param name="id">The session identifier.</param>
-        /// <param name="lockId">The lock identifier for the current request.</param>
+        /// 
+        /// <param name="context">
+        /// The <see cref="System.Web.HttpContext"/> for the current request.
+        /// </param>
+        /// 
+        /// <param name="id">
+        /// The session identifier for the current request.
+        /// </param>
+        /// 
+        /// <param name="lockId">
+        /// The lock identifier for the current request.
+        /// </param>
         public override void ReleaseItemExclusive(HttpContext context, string id, object lockId)
         {
-            using (var db = _store.OpenSession())
-            {
-                var query = db.Query<Session>()
-                              .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
-                              .Where(x => x.Id == id && x.ApplicationName == ApplicationName);
+            var session = _db.Load<Session>(id);
 
-                var sessionState = _locking ? query.Single(x => x.LockId == (int)lockId) : query.Single();
+            if (session == null)
+                return;
 
-                var expiry = DateTime.UtcNow.AddMinutes(_config.Timeout.TotalMinutes);
+            if (_locking && session.Locked && session.LockId != (Guid) lockId)
+                return;
 
-                sessionState.Expires = expiry;
-                sessionState.Locked  = false;
+            session.Locked = false;
 
-                db.Advanced.GetMetadataFor(sessionState)["Raven-Expiration-Date"] = new RavenJValue(expiry);
-                db.SaveChanges();
-            }
+            _db.SaveChanges();
         }
 
         /// <summary>
-        /// deletes the session information from the data store where the data store item matches the supplied SessionID value, 
-        /// the current application, and the supplied lock identifier.
+        /// Updates the expiration date and time of an item in the session data store.
         /// </summary>
-        /// <param name="context">The HttpContext instance for the current request</param>
-        /// <param name="id">The session identifier.</param>
-        /// <param name="lockId">The exclusive-lock identifier.</param>
-        /// <param name="item"></param>
-        public override void RemoveItem(HttpContext context, string id, object lockId, SessionStateStoreData item)
-        {
-            using (var db = _store.OpenSession())
-            {
-                var query = db.Query<Session>()
-                              .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
-                              .Where(x => x.Id == id && x.ApplicationName == ApplicationName);
-
-                var sessionState = _locking ? query.Single(x => x.LockId == (int)lockId) : query.Single();
-
-                if (sessionState != null)
-                {
-                    db.Delete(sessionState);
-                    db.SaveChanges();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Resets the expiry timeout for a session item.
-        /// </summary>
-        /// <param name="context">The HttpContext instance for the current request</param>
-        /// <param name="id">The session identifier.</param>
+        /// 
+        /// <param name="context">
+        /// The <see cref="System.Web.HttpContext"/> for the current request.
+        /// </param>
+        /// 
+        /// <param name="id">
+        /// The session identifier for the current request.
+        /// </param>
         public override void ResetItemTimeout(HttpContext context, string id)
         {
-            using (var db = _store.OpenSession())
-            {
-                var sessionState = db.Query<Session>()
-                                     .SingleOrDefault(x => x.Id == id && x.ApplicationName == ApplicationName);
+            var session = _db.Load<Session>(id);
 
-                if (sessionState != null)
-                {
-                    var expiry = DateTime.UtcNow.AddMinutes(_config.Timeout.TotalMinutes);
+            if (session == null)
+                return;
 
-                    sessionState.Expires = expiry;
+            session.Expires = DateTime.UtcNow.AddMinutes(_timeout);
 
-                    db.Advanced.GetMetadataFor(sessionState)["Raven-Expiration-Date"] = new RavenJValue(expiry);
-                    db.SaveChanges();
-                }
-            }
+            _db.Advanced.GetMetadataFor(session)["Raven-Expiration-Date"] = new RavenJValue(session.Expires);
+            _db.SaveChanges();
         }
 
         /// <summary>
-        /// Adds an uninitialized item to the session data store.
+        /// Deletes item data from the session data store.
         /// </summary>
-        /// <param name="context">The HttpContext instance for the current request</param>
-        /// <param name="id">The session identifier.</param>
-        /// <param name="timeout">The expiry timeout in minutes.</param>
-        public override void CreateUninitializedItem(HttpContext context, string id, int timeout)
+        /// 
+        /// <param name="context">
+        /// The <see cref="System.Web.HttpContext"/> for the current request.
+        /// </param>
+        /// 
+        /// <param name="id">
+        /// The session identifier for the current request.
+        /// </param>
+        /// 
+        /// <param name="lockId">
+        /// The lock identifier for the current request.
+        /// </param>
+        /// 
+        /// <param name="item">
+        /// The <see cref="System.Web.SessionState.SessionStateStoreData"/> that represents the item to
+        /// delete from the data store.
+        /// </param>
+        public override void RemoveItem(HttpContext context, string id, object lockId, SessionStateStoreData item)
         {
-            using (var db = _store.OpenSession())
-            {
-                var expiry = DateTime.UtcNow.AddMinutes(timeout);
+            var session = _db.Load<Session>(id);
 
-                var sessionState = new Session(id, ApplicationName)
-                {
-                    Expires = expiry
-                };
+            if (session == null)
+                return;
 
-                db.Store(sessionState);
-                db.Advanced.GetMetadataFor(sessionState)["Raven-Expiration-Date"] = new RavenJValue(expiry);
-                db.SaveChanges();
-            }
-        }
+            if (_locking && session.Locked && session.LockId != (Guid) lockId)
+                return;
 
-
-        /// <summary>
-        ///  returns a new SessionStateStoreData object with an empty ISessionStateItemCollection object, 
-        ///  an HttpStaticObjectsCollection collection, and the specified Timeout value.
-        /// </summary>
-        /// <param name="context">The HttpContext instance for the current request</param>
-        /// <param name="timeout">The expiry timeout in minutes.</param>
-        /// <returns>A newly created SessionStateStoreData object.</returns>
-        public override SessionStateStoreData CreateNewStoreData(HttpContext context, int timeout)
-        {
-            return new SessionStateStoreData(new SessionStateItemCollection(), SessionStateUtility.GetSessionStaticObjects(context), timeout);
+            _db.Delete(session);
+            _db.SaveChanges();
         }
 
         /// <summary>
-        /// Takes as input a delegate that references the Session_OnEnd event defined in the Global.asax file. 
-        /// If the session-state store provider supports the Session_OnEnd event, a local reference to the 
-        /// SessionStateItemExpireCallback parameter is set and the method returns true; otherwise, the method returns false.
+        /// Sets a reference to the <see cref="System.Web.SessionState.SessionStateItemExpireCallback"/>
+        /// delegate for the Session_OnEnd event defined in the Global.asax file.
         /// </summary>
-        /// <param name="expireCallback">A callback.</param>
-        /// <returns>False.</returns>
+        /// 
+        /// <param name="expireCallback">
+        /// The callback delegate for the Session_OnEnd event defined in the Global.asax file.
+        /// </param>
+        /// 
+        /// <returns>
+        /// true if the session-state store provider supports calling the Session_OnEnd
+        /// event; otherwise, false.
+        /// </returns>
         public override bool SetItemExpireCallback(SessionStateItemExpireCallback expireCallback)
         {
             return false;
         }
 
-        /// <summary>
-        /// Performs any initialization required by your session-state store provider.
-        /// </summary>
-        /// <param name="context">The HttpContext instance for the current request</param>
-        public override void InitializeRequest(HttpContext context)
-        {
-
-        }
-
-        /// <summary>
-        /// Performs any cleanup required by your session-state store provider.
-        /// </summary>
-        /// <param name="context">The HttpContext instance for the current request</param>
-        public override void EndRequest(HttpContext context)
-        {
-
-        }
-
-        public override void Dispose()
-        {
-            if (_store != null && _disposeStore)
-                _store.Dispose();
-        }
-
-        //
-        // GetSessionStoreItem is called by both the GetItem and 
-        // GetItemExclusive methods. GetSessionStoreItem retrieves the 
-        // session data from the data source. If the lockRecord parameter
-        // is true (in the case of GetItemExclusive), then GetSessionStoreItem
-        // locks the record and sets a new LockId and LockDate.
-        //
+        /* GetSessionStoreItem is called by both the GetItem and GetItemExclusive methods.
+         * 
+         * GetSessionStoreItem retrieves the session data from the data source. If the lockRecord
+         * parameter is true (in the case of GetItemExclusive), then GetSessionStoreItem locks
+         * the record and sets a new LockId and LockDate, unless locking is disabled.
+         */
         private SessionStateStoreData GetSessionStoreItem(bool lockRecord,
                                                           HttpContext context,
                                                           string id,
@@ -382,36 +478,34 @@ namespace Raven.Contrib.AspNet.Session
             locked      = false;
             actionFlags = 0;
 
-            using (var db = _store.OpenSession())
+            using (Disposable.Create(() => _db.Advanced.UseOptimisticConcurrency         = false))
+            using (Disposable.Create(() => _db.Advanced.AllowNonAuthoritativeInformation = true))
             {
-                db.Advanced.UseOptimisticConcurrency         = _locking;
-                db.Advanced.AllowNonAuthoritativeInformation = false;
+                _db.Advanced.UseOptimisticConcurrency         = true;
+                _db.Advanced.AllowNonAuthoritativeInformation = false;
 
-                var sessionState = db.Query<Session>()
-                                     .Customize(x => x.WaitForNonStaleResultsAsOfLastWrite())
-                                     .SingleOrDefault(x => x.Id == id && x.ApplicationName == ApplicationName);
+                var session = _db.Load<Session>(id);
 
-                if (sessionState == null)
+                if (session == null)
                     return null;
 
-                // Abort if locked.
-                if (_locking && sessionState.Locked)
+                if (_locking && session.Locked)
                 {
                     locked  = true;
-                    lockAge = DateTime.UtcNow.Subtract(sessionState.LockDate);
-                    lockId  = sessionState.LockId;
+                    lockAge = DateTime.UtcNow.Subtract(session.LockDate);
+                    lockId  = session.LockId;
 
                     return null;
                 }
 
                 // We shouldn't get expired items if the expiration bundle is installed.
                 // If it isn't installed, or we made the window, we'll delete expired items here.
-                if (sessionState.Expires < DateTime.UtcNow)
+                if (session.Expires < DateTime.UtcNow)
                 {
                     try
                     {
-                        db.Delete(sessionState);
-                        db.SaveChanges();
+                        _db.Delete(session);
+                        _db.SaveChanges();
                     }
                     catch (ConcurrencyException)
                     {
@@ -423,41 +517,38 @@ namespace Raven.Contrib.AspNet.Session
 
                 if (_locking && lockRecord)
                 {
-                    sessionState.Locked   = true;
-                    sessionState.LockId  += 1;
-                    sessionState.LockDate = DateTime.UtcNow;
+                    session.Locked   = true;
+                    session.LockId   = Guid.NewGuid();
+                    session.LockDate = DateTime.UtcNow;
 
                     try
                     {
-                        db.SaveChanges();
+                        _db.SaveChanges();
                     }
                     catch (ConcurrencyException)
                     {
+                        // The session was locked by another request. Retry.
                         if (retriesRemaining > 0)
                         {
-                            return GetSessionStoreItem(true, context, id, retriesRemaining - 1, out locked, out lockAge, out lockId, out actionFlags);
+                            return GetSessionStoreItem(true, context, id, retriesRemaining - 1, out locked,
+                                                        out lockAge, out lockId, out actionFlags);
                         }
                         else
                         {
-                            throw;
+                            return null;
                         }
                     }
+
+                    lockId = session.LockId;
                 }
 
-                lockId = sessionState.LockId;
-
-                var timeout = (int)_config.Timeout.TotalMinutes;
-
-                if (sessionState.Flags == SessionStateActions.InitializeItem)
+                if (session.Flags == SessionStateActions.InitializeItem)
                 {
-                    var collection = new SessionStateItemCollection();
-                    var objects    = SessionStateUtility.GetSessionStaticObjects(context);
-
-                    return new SessionStateStoreData(collection, objects, timeout);
+                    return CreateNewStoreData(context, _timeout);
                 }
                 else
                 {
-                    return Deserialize(context, sessionState.SessionItems, timeout);
+                    return Deserialize(context, session.SessionItems, _timeout);
                 }
             }
         }
@@ -481,8 +572,8 @@ namespace Raven.Contrib.AspNet.Session
         {
             using (var stream = new MemoryStream(Convert.FromBase64String(serializedItems)))
             {
-                var items    = new SessionStateItemCollection();
-                var objects  = SessionStateUtility.GetSessionStaticObjects(context);
+                var items   = new SessionStateItemCollection();
+                var objects = SessionStateUtility.GetSessionStaticObjects(context);
 
                 if (stream.Length > 0)
                 {
