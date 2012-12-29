@@ -26,8 +26,7 @@ namespace Raven.Bundles.Contrib.Tests.ClockDocs
 
                 using (var session = documentStore.OpenSession())
                 {
-                    // We could have a clock that updates only every day, but we won't get visibility over today's orders until tomorrow.
-                    session.Advanced.ConfigureClockDoc("EveryHour", TimeSpan.FromHours(1));
+                    session.Advanced.ConfigureClockDoc("EveryDay", TimeSpan.FromDays(1));
                     session.SaveChanges();
                 }
 
@@ -111,7 +110,7 @@ namespace Raven.Bundles.Contrib.Tests.ClockDocs
             public Orders_TotalByCustomerFor30Days()
             {
                 Map = orders => from order in orders
-                                let now = LoadDocument<Clock>("Raven/Clocks/EveryHour").UtcTime
+                                let now = LoadDocument<Clock>("Raven/Clocks/EveryDay").UtcTime
                                 let age = now - order.Placed
                                 where age.TotalDays <= 30
                                 select new
