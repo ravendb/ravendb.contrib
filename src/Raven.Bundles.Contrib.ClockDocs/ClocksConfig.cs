@@ -18,13 +18,13 @@ namespace Raven.Bundles.ClockDocs
             Clocks = new List<ClockConfig>();
         }
 
-        public void AddClock(string name, TimeSpan interval, TimeSpan sync)
+        public void AddClock(string name, TimeSpan interval, TimeSpan offset)
         {
             var clock = new ClockConfig
                         {
                             Name = name,
                             IntervalTicks = interval.Ticks,
-                            SyncTicks = sync.Ticks
+                            OffsetTicks = offset.Ticks
                         };
 
             Clocks.Add(clock);
@@ -34,13 +34,13 @@ namespace Raven.Bundles.ClockDocs
         {
             public string Name { get; set; }
             public long IntervalTicks { get; set; }
-            public long SyncTicks { get; set; }
+            public long OffsetTicks { get; set; }
 
-            public void Update(string name, TimeSpan interval, TimeSpan sync)
+            public void Update(string name, TimeSpan interval, TimeSpan offset)
             {
                 Name = name;
                 IntervalTicks = interval.Ticks;
-                SyncTicks = sync.Ticks;
+                OffsetTicks = offset.Ticks;
             }
         }
     }

@@ -56,18 +56,18 @@ namespace Raven.Bundles.ClockDocs
             // add new timers from the config
             foreach (var clockConfig in config.Clocks)
             {
-                // Determine the delay before starting the timer.  It should line up with the sync period.
+                // Determine the delay before starting the timer.  It should line up with the interval.
                 TimeSpan delay;
-                var syncTicks = clockConfig.SyncTicks;
-                if (syncTicks == 0)
+                var ticks = clockConfig.IntervalTicks;
+                if (ticks == 0)
                 {
                     delay = TimeSpan.Zero;
                 }
                 else
                 {
-                    // round now to sync
+                    // round now to interval
                     var now = SystemTime.UtcNow;
-                    var nextStart = ((now.Ticks + syncTicks) / syncTicks) * syncTicks;
+                    var nextStart = ((now.Ticks + ticks) / ticks) * ticks;
                     delay = new TimeSpan(nextStart - now.Ticks);
                     if (delay < TimeSpan.Zero)
                         delay = TimeSpan.Zero;
@@ -84,17 +84,20 @@ namespace Raven.Bundles.ClockDocs
         {
             var config = (ClocksConfig.ClockConfig) state;
 
-            var now = SystemTime.UtcNow;
+            var utcTime = SystemTime.UtcNow;
 
-            // round now to sync
-            var syncTicks = config.SyncTicks;
-            if (syncTicks > 0)
-                now = new DateTime((now.Ticks / syncTicks) * syncTicks, DateTimeKind.Utc);
+            // round now to interval
+            var ticks = config.IntervalTicks;
+            if (ticks > 0)
+                utcTime = new DateTime((utcTime.Ticks / ticks) * ticks, DateTimeKind.Utc);
+
+            // apply any offset specified
+            utcTime = utcTime.AddTicks(config.OffsetTicks);
 
             var clock = new Clock
                         {
-                            UtcTime = now,
-                            ServerLocalTime = new DateTimeOffset(now).ToLocalTime(),
+                            UtcTime = utcTime,
+                            ServerLocalTime = new DateTimeOffset(utcTime).ToLocalTime(),
                             ServerTimeZone = TimeZoneInfo.Local.Id,
                         };
 
