@@ -1,5 +1,8 @@
-﻿using Raven.Client.Connection;
+﻿using System;
+using System.Linq;
+using Raven.Client.Connection;
 using Raven.Client.Document;
+using Raven.Json.Linq;
 
 namespace Raven.Client
 {
@@ -27,6 +30,35 @@ namespace Raven.Client
         public static string GetDatabaseName(this IAdvancedDocumentSessionOperations session)
         {
             return ((DocumentSession)session).DatabaseName;
+        }
+
+        /// <summary>
+        /// Adds one or more document keys to an entity's cascade delete metadata.
+        /// Requires the cascade delete bundle on the server.
+        /// </summary>
+        /// <param name="session">The Raven advanced session.</param>
+        /// <param name="entity">The entity to update.</param>
+        /// <param name="documentKeys">One or more keys to foreign documents.</param>
+        public static void AddCascadeDeleteReference(this IAdvancedDocumentSessionOperations session, object entity, params string[] documentKeys)
+        {
+            var metadata = session.GetMetadataFor(entity);
+            if (metadata == null)
+                throw new InvalidOperationException("The entity must be tracked in the session before calling this method.");
+
+            if (documentKeys.Length == 0)
+                throw new ArgumentException("At least one document key must be specified.");
+
+            const string metadataKey = "Raven-Cascade-Delete-Documents";
+
+            RavenJToken token;
+            if (!metadata.TryGetValue(metadataKey, out token))
+                token = new RavenJArray();
+
+            var list = (RavenJArray)token;
+            foreach (var documentKey in documentKeys.Where(key => !list.Contains(key)))
+                list.Add(documentKey);
+
+            metadata[metadataKey] = list;
         }
     }
 }
