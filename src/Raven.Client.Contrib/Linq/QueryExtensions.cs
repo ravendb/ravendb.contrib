@@ -29,5 +29,25 @@
 
             customization.Include("&metadata-only=true");
         }
+
+        /// <summary>
+        /// Order the results by the specified fields
+        /// The fields are the names of the fields to sort, defaulting to sorting by ascending.
+        /// You can prefix a field name with '-' to indicate sorting by descending or '+' to sort by ascending
+        /// </summary>
+        public static IRavenQueryable<T> OrderBy<T>(this IRavenQueryable<T> source, params string[] fields)
+        {
+            return source.Customize(x => ((IDocumentQuery<T>) x).OrderBy(fields));
+        }
+
+        /// <summary>
+        /// Order the results by the specified fields
+        /// The fields are the names of the fields to sort, defaulting to sorting by descending.
+        /// You can prefix a field name with '-' to indicate sorting by descending or '+' to sort by ascending
+        /// </summary>
+        public static IRavenQueryable<T> OrderByDescending<T>(this IRavenQueryable<T> source, params string[] fields)
+        {
+            return source.Customize(x => ((IDocumentQuery<T>) x).OrderByDescending(fields));
+        }
     }
 }
