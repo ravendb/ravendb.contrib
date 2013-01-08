@@ -63,7 +63,7 @@ namespace Raven.Client.Contrib.Profiling
                 case RequestStatus.SentToServer:
                     return ExecuteType.Reader;
 
-                case RequestStatus.AggresivelyCached:
+                case RequestStatus.AggressivelyCached:
                     return ExecuteType.NonQuery;
 
                 default:
