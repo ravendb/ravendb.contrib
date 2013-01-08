@@ -69,7 +69,10 @@ namespace Raven.Contrib.AspNet.Auth
 
             using (var db = _store.OpenSession())
             {
-                var account = db.Query<Account>().SingleOrDefault(a => a.UserName == userName);
+                var account = db.Query<Account>()
+                                .Customize(q => q.WaitForNonStaleResultsAsOfLastWrite())
+                                .SingleOrDefault(a => a.UserName == userName);
+
                 if (account == null)
                     throw new InvalidCredentialException();
 
@@ -93,7 +96,10 @@ namespace Raven.Contrib.AspNet.Auth
 
             using (var db = _store.OpenSession())
             {
-                var account = db.Query<Account>().SingleOrDefault(a => a.Identifiers.Any(i => i.Value == identifier));
+                var account = db.Query<Account>()
+                                .Customize(q => q.WaitForNonStaleResultsAsOfLastWrite())
+                                .SingleOrDefault(a => a.Identifiers.Any(i => i.Value == identifier));
+
                 if (account == null)
                     throw new InvalidIdentifierException(identifier);
 
@@ -136,7 +142,11 @@ namespace Raven.Contrib.AspNet.Auth
 
             using (var db = _store.OpenSession())
             {
-                if (db.Query<Account>().Any(a => a.UserName == userName))
+                var query = db.Query<Account>()
+                              .Customize(q => q.WaitForNonStaleResultsAsOfLastWrite())
+                              .Where(a => a.UserName == userName);
+
+                if (query.Any())
                     throw new DuplicateUserNameException(userName);
 
                 db.Store(new Account
@@ -170,12 +180,12 @@ namespace Raven.Contrib.AspNet.Auth
 
             using (var db = _store.OpenSession())
             {
-                var q = from a in db.Query<Account>()
-                        let i = a.Identifiers.SingleOrDefault(i => i.Provider == providerName && i.Value == identifier)
-                        where i != null
-                        select i;
+                var query = from a in db.Query<Account>().Customize(q => q.WaitForNonStaleResultsAsOfLastWrite())
+                            let i = a.Identifiers.SingleOrDefault(i => i.Provider == providerName && i.Value == identifier)
+                            where i != null
+                            select i;
 
-                if (q.Any())
+                if (query.Any())
                     throw new DuplicateIdentifierException(identifier);
 
                 db.Store(new Account
@@ -214,7 +224,10 @@ namespace Raven.Contrib.AspNet.Auth
 
             using (var db = _store.OpenSession())
             {
-                var user = db.Query<Account>().SingleOrDefault(a => a.UserName == userName);
+                var user = db.Query<Account>()
+                             .Customize(q => q.WaitForNonStaleResultsAsOfLastWrite())
+                             .SingleOrDefault(a => a.UserName == userName);
+
                 if (user == null)
                     throw new InvalidUserNameException(userName);
 
@@ -242,7 +255,10 @@ namespace Raven.Contrib.AspNet.Auth
 
             using (var db = _store.OpenSession())
             {
-                var user = db.Query<Account>().SingleOrDefault(a => a.UserName == userName);
+                var user = db.Query<Account>()
+                             .Customize(q => q.WaitForNonStaleResultsAsOfLastWrite())
+                             .SingleOrDefault(a => a.UserName == userName);
+
                 if (user == null)
                     throw new InvalidUserNameException(userName);
 
@@ -261,7 +277,10 @@ namespace Raven.Contrib.AspNet.Auth
         {
             using (var db = _store.OpenSession())
             {
-                var user = db.Query<Account>().SingleOrDefault(a => a.UserName == userName);
+                var user = db.Query<Account>()
+                             .Customize(q => q.WaitForNonStaleResultsAsOfLastWrite())
+                             .SingleOrDefault(a => a.UserName == userName);
+
                 if (user == null)
                     throw new ArgumentOutOfRangeException("userName");
 
@@ -290,7 +309,10 @@ namespace Raven.Contrib.AspNet.Auth
 
             using (var db = _store.OpenSession())
             {
-                var user = db.Query<Account>().SingleOrDefault(a => a.UserName == userName);
+                var user = db.Query<Account>()
+                             .Customize(q => q.WaitForNonStaleResultsAsOfLastWrite())
+                             .SingleOrDefault(a => a.UserName == userName);
+
                 if (user == null)
                     throw new InvalidUserNameException(userName);
 
@@ -317,7 +339,10 @@ namespace Raven.Contrib.AspNet.Auth
 
             using (var db = _store.OpenSession())
             {
-                var user = db.Query<Account>().SingleOrDefault(a => a.UserName == userName);
+                var user = db.Query<Account>()
+                             .Customize(q => q.WaitForNonStaleResultsAsOfLastWrite())
+                             .SingleOrDefault(a => a.UserName == userName);
+
                 if (user == null)
                     throw new InvalidUserNameException(userName);
 
@@ -339,7 +364,10 @@ namespace Raven.Contrib.AspNet.Auth
 
             using (var db = _store.OpenSession())
             {
-                var user = db.Query<Account>().SingleOrDefault(a => a.UserName == userName);
+                var user = db.Query<Account>()
+                             .Customize(q => q.WaitForNonStaleResultsAsOfLastWrite())
+                             .SingleOrDefault(a => a.UserName == userName);
+
                 if (user == null)
                     throw new InvalidUserNameException(userName);
 
@@ -363,7 +391,10 @@ namespace Raven.Contrib.AspNet.Auth
 
             using (var db = _store.OpenSession())
             {
-                var user = db.Query<Account>().SingleOrDefault(a => a.UserName == userName);
+                var user = db.Query<Account>()
+                             .Customize(q => q.WaitForNonStaleResultsAsOfLastWrite())
+                             .SingleOrDefault(a => a.UserName == userName);
+
                 if (user == null)
                     throw new InvalidUserNameException(userName);
 
@@ -394,7 +425,10 @@ namespace Raven.Contrib.AspNet.Auth
 
             using (var db = _store.OpenSession())
             {
-                var user = db.Query<Account>().SingleOrDefault(a => a.PasswordResetToken == passwordResetToken);
+                var user = db.Query<Account>()
+                             .Customize(q => q.WaitForNonStaleResultsAsOfLastWrite())
+                             .SingleOrDefault(a => a.PasswordResetToken == passwordResetToken);
+
                 if (user == null)
                     throw new InvalidUserNameException(passwordResetToken);
 

@@ -345,9 +345,11 @@ namespace Raven.Contrib.AspNet.Session
                 return;
 
             session.Locked       = false;
+            session.Expires      = DateTime.UtcNow.AddMinutes(_timeout);
             session.SessionItems = Serialize((SessionStateItemCollection) item.Items);
 
             _db.Store(session);
+            _db.Advanced.GetMetadataFor(session)["Raven-Expiration-Date"] = new RavenJValue(session.Expires);
             _db.SaveChanges();
         }
 
