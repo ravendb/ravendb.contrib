@@ -57,7 +57,6 @@
     </Compile>
     <Compile Include="Account.cs" />
     <Compile Include="AuthConfiguration.cs" />
-    <Compile Include="AuthException.cs" />
     <Compile Include="AuthProvider.cs" />
     <Compile Include="AuthProvider.Static.cs" />
     <Compile Include="AuthResult.cs" />
@@ -69,7 +68,6 @@
     <Compile Include="Interfaces\IAuthProvider.cs" />
     <Compile Include="Interfaces\IExternalAuthProvider.cs" />
     <Compile Include="Interfaces\ISecurityEncoder.cs" />
-    <Compile Include="InvalidCredentialsException.cs" />
     <Compile Include="InvalidIdentifierException.cs" />
     <Compile Include="InvalidPasswordException.cs" />
     <Compile Include="InvalidPasswordResetTokenException.cs" />
