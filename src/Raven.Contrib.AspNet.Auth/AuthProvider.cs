@@ -16,6 +16,32 @@ namespace Raven.Contrib.AspNet.Auth
         private readonly ISecurityEncoder _encoder;
         private readonly IAuthenticator _authenticator;
 
+        private class UserId
+        {
+            public string AccountId
+            {
+                get;
+                set;
+            }
+
+            public string UserName
+            {
+                get;
+                set;
+            }
+        }
+
+        /// <summary>
+        /// The currently logged-in account.
+        /// </summary>
+        public string Current
+        {
+            get
+            {
+                return _authenticator.IsAuthenticated ? GetUserId().UserName : null;
+            }
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthProvider" /> class.
         /// </summary>
@@ -50,7 +76,7 @@ namespace Raven.Contrib.AspNet.Auth
                 if (!_encoder.Verify(password, account.Password))
                     throw new InvalidCredentialException();
 
-                _authenticator.IssueAuthTicket(account.Id, persistent);
+                SetUserId(new UserId { AccountId = account.Id, UserName = account.UserName }, persistent);
             }
         }
 
@@ -67,11 +93,11 @@ namespace Raven.Contrib.AspNet.Auth
 
             using (var db = _store.OpenSession())
             {
-                var account = db.Query<Account>().SingleOrDefault(a => a.Identifier == identifier);
+                var account = db.Query<Account>().SingleOrDefault(a => a.Identifiers.Any(i => i.Value == identifier));
                 if (account == null)
                     throw new InvalidIdentifierException(identifier);
 
-                _authenticator.IssueAuthTicket(account.Id, persistent);
+                SetUserId(new UserId { AccountId = account.Id, UserName = account.UserName }, persistent);
             }
         }
 
@@ -84,6 +110,17 @@ namespace Raven.Contrib.AspNet.Auth
         }
 
         /// <summary>
+        /// Determines whether the user is logged in.
+        /// </summary>
+        public bool IsAuthenticated
+        {
+            get
+            {
+                return _authenticator.IsAuthenticated;
+            }
+        }
+
+        /// <summary>
         /// Creates a local user account.
         /// </summary>
         /// <param name="userName">The username of the new account.</param>
@@ -93,6 +130,9 @@ namespace Raven.Contrib.AspNet.Auth
         {
             if (userName == null)
                 throw new ArgumentNullException("userName");
+
+            if (password == null)
+                throw new ArgumentNullException("password");
 
             using (var db = _store.OpenSession())
             {
@@ -111,19 +151,45 @@ namespace Raven.Contrib.AspNet.Auth
         /// <summary>
         /// Creates an external user account.
         /// </summary>
+        /// <param name="userName">The username of the new account.</param>
         /// <param name="identifier">The identifier of the new account.</param>
+        /// <param name="providerName">The name of the external auth provider.</param>
         /// <returns>The ID of the user account.</returns>
-        public void CreateAccount(string identifier)
+        public void CreateExternalAccount(string userName, string identifier, string providerName)
         {
+            if (userName == null)
+                throw new ArgumentNullException("userName");
+
             if (identifier == null)
                 throw new ArgumentNullException("identifier");
 
+            if (providerName == null)
+                throw new ArgumentNullException("providerName");
+
+            providerName = providerName.ToLowerInvariant();
+
             using (var db = _store.OpenSession())
             {
-                if (db.Query<Account>().Any(a => a.Identifier == identifier))
+                var q = from a in db.Query<Account>()
+                        let i = a.Identifiers.SingleOrDefault(i => i.Provider == providerName && i.Value == identifier)
+                        where i != null
+                        select i;
+
+                if (q.Any())
                     throw new DuplicateIdentifierException(identifier);
 
-                db.Store(new Account { Identifier = identifier });
+                db.Store(new Account
+                {
+                    UserName    = userName,
+                    Identifiers =
+                    {
+                        new Account.Identifier
+                        {
+                            Provider = providerName,
+                            Value    = identifier,
+                        }
+                    }
+                });
                 db.SaveChanges();
             }
         }
@@ -187,6 +253,101 @@ namespace Raven.Contrib.AspNet.Auth
         }
 
         /// <summary>
+        /// Checks whether an account is a local account.
+        /// </summary>
+        /// <param name="userName">The username of the account to check.</param>
+        /// <returns>true if the current account is a local account, false otherwise</returns>
+        public bool IsLocalAccount(string userName)
+        {
+            using (var db = _store.OpenSession())
+            {
+                var user = db.Query<Account>().SingleOrDefault(a => a.UserName == userName);
+                if (user == null)
+                    throw new ArgumentOutOfRangeException("userName");
+
+                return !String.IsNullOrEmpty(user.Password);
+            }
+        }
+
+        /// <summary>
+        /// Adds an identifier for an external auth provider to an account. 
+        /// </summary>
+        /// <param name="userName">The username of the account.</param>
+        /// <param name="identifier">The identifier to add.</param>
+        /// <param name="providerName">The name of the external auth provider.</param>
+        public void AddIdentifier(string userName, string identifier, string providerName)
+        {
+            if (userName == null)
+                throw new ArgumentNullException("userName");
+
+            if (identifier == null)
+                throw new ArgumentNullException("identifier");
+
+            if (providerName == null)
+                throw new ArgumentNullException("providerName");
+
+            providerName = providerName.ToLowerInvariant();
+
+            using (var db = _store.OpenSession())
+            {
+                var user = db.Query<Account>().SingleOrDefault(a => a.UserName == userName);
+                if (user == null)
+                    throw new InvalidUserNameException(userName);
+
+                user.Identifiers.Add(new Account.Identifier { Provider = providerName, Value = identifier });
+
+                db.SaveChanges();
+            }
+        }
+
+        /// <summary>
+        /// Removes an identifier for an external authenticator from an account. 
+        /// </summary>
+        /// <param name="userName">The username or identifier of the account</param>
+        /// <param name="providerName">The name of the external auth provider.</param>
+        public void RemoveIdentifier(string userName, string providerName)
+        {
+            if (userName == null)
+                throw new ArgumentNullException("userName");
+
+            if (providerName == null)
+                throw new ArgumentNullException("providerName");
+
+            providerName = providerName.ToLowerInvariant();
+
+            using (var db = _store.OpenSession())
+            {
+                var user = db.Query<Account>().SingleOrDefault(a => a.UserName == userName);
+                if (user == null)
+                    throw new InvalidUserNameException(userName);
+
+                user.Identifiers.RemoveAll(i => i.Provider == providerName);
+
+                db.SaveChanges();
+            }
+        }
+
+        /// <summary>
+        /// Retrieves all the identifiers for an account.
+        /// </summary>
+        /// <param name="userName">The username of the account.</param>
+        /// <returns>A dictionary with the provider name as the key and the identifier as the value.</returns>
+        public IDictionary<string, string> GetIdentifiers(string userName)
+        {
+            if (userName == null)
+                throw new ArgumentNullException("userName");
+
+            using (var db = _store.OpenSession())
+            {
+                var user = db.Query<Account>().SingleOrDefault(a => a.UserName == userName);
+                if (user == null)
+                    throw new InvalidUserNameException(userName);
+
+                return user.Identifiers.ToDictionary(i => i.Provider, i => i.Value);
+            }
+        }
+
+        /// <summary>
         /// Generates a password reset token for a user.
         /// </summary>
         /// <param name="userName">The username.</param>
@@ -245,7 +406,25 @@ namespace Raven.Contrib.AspNet.Auth
             }
         }
 
-        private static string GenerateToken()
+        private UserId GetUserId()
+        {
+            string[] data = _authenticator.Current.Split('|');
+
+            return new UserId
+            {
+                AccountId = data[0],
+                UserName  = data[1],
+            };
+        }
+
+        private void SetUserId(UserId id, bool persistent)
+        {
+            var data = String.Join("|", id.AccountId, id.UserName);
+
+            _authenticator.IssueAuthTicket(data, persistent);
+        }
+
+        private string GenerateToken()
         {
             var guid  = new Guid();
             var token = guid.ToString()

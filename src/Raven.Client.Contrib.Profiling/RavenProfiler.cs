@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Raven.Client.Connection.Profiling;
-using Raven.Client.Document;
 using StackExchange.Profiling;
 using StackExchange.Profiling.Data;
 
@@ -18,7 +17,7 @@ namespace Raven.Client.Contrib.Profiling
             ElapsedTicks = typeof(MiniProfiler).GetProperty("ElapsedTicks", BindingFlags.NonPublic | BindingFlags.Instance).GetGetMethod(nonPublic: true);
         }
 
-        public static void InitializeFor(DocumentStore store)
+        public static void InitializeFor(IDocumentStore store)
         {
             if (store != null && store.JsonRequestFactory != null)
                 store.JsonRequestFactory.LogRequest += (sender, r) => IncludeTiming(JsonFormatter.FormatRequest(r));
