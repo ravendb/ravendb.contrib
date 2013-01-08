@@ -8,6 +8,22 @@ namespace Raven.Contrib.AspNet.Auth.Interfaces
     public interface IAuthenticator
     {
         /// <summary>
+        /// Whether the user is logged in.
+        /// </summary>
+        bool IsAuthenticated
+        {
+            get;
+        }
+
+        /// <summary>
+        /// The identifier of the currently logged-in account.
+        /// </summary>
+        string Current
+        {
+            get;
+        }
+
+        /// <summary>
         /// Issues an authentication ticket.
         /// </summary>
         /// <param name="identifier">The authentication identifier.</param>

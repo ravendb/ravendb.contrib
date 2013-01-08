@@ -8,6 +8,22 @@ namespace Raven.Contrib.AspNet.Auth.Interfaces
     public interface IAuthProvider
     {
         /// <summary>
+        /// The username of the currently logged-in account.
+        /// </summary>
+        string Current
+        {
+            get;
+        }
+
+        /// <summary>
+        /// Determines whether the user is logged in.
+        /// </summary>
+        bool IsAuthenticated
+        {
+            get;
+        }
+
+        /// <summary>
         /// Logs the user in if the <paramref name="userName"/> and <paramref name="password"/> combination is valid.
         /// </summary>
         /// <param name="userName">The username.</param>
@@ -28,7 +44,6 @@ namespace Raven.Contrib.AspNet.Auth.Interfaces
         /// Logs the current user out.
         /// </summary>
         void Logout();
-
         /// <summary>
         /// Creates a local user account.
         /// </summary>
@@ -40,9 +55,11 @@ namespace Raven.Contrib.AspNet.Auth.Interfaces
         /// <summary>
         /// Creates an external user account.
         /// </summary>
+        /// <param name="userName">The username of the new account.</param>
         /// <param name="identifier">The identifier of the new account.</param>
+        /// <param name="providerName">The name of the external auth provider.</param>
         /// <returns>The ID of the user account.</returns>
-        void CreateAccount(string identifier);
+        void CreateExternalAccount(string userName, string identifier, string providerName);
 
         /// <summary>
         /// Changes the password for a user.
@@ -59,6 +76,35 @@ namespace Raven.Contrib.AspNet.Auth.Interfaces
         /// <param name="userName">The username.</param>
         /// <param name="newPassword">The new password.</param>
         void SetPassword(string userName, string newPassword);
+
+        /// <summary>
+        /// Checks whether an account is a local account.
+        /// </summary>
+        /// <param name="userName">The username of the account to check.</param>
+        /// <returns>true if the current account is a local account, false otherwise</returns>
+        bool IsLocalAccount(string userName);
+
+        /// <summary>
+        /// Adds an identifier for an external auth provider to an account. 
+        /// </summary>
+        /// <param name="userName">The username of the account.</param>
+        /// <param name="identifier">The identifier to add.</param>
+        /// <param name="providerName">The name of the external auth provider.</param>
+        void AddIdentifier(string userName, string identifier, string providerName);
+
+        /// <summary>
+        /// Removes an identifier for an external authenticator from an account. 
+        /// </summary>
+        /// <param name="userName">The username of the account.</param>
+        /// <param name="providerName">The name of the external auth provider.</param>
+        void RemoveIdentifier(string userName, string providerName);
+
+        /// <summary>
+        /// Retrieves all the identifiers for an account.
+        /// </summary>
+        /// <param name="userName">The username of the account.</param>
+        /// <returns>A dictionary with the provider name as the key and the identifier as the value.</returns>
+        IDictionary<string, string> GetIdentifiers(string userName);
 
         /// <summary>
         /// Generates a password reset token for a user.
