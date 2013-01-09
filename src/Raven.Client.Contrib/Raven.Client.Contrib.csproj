@@ -37,6 +37,9 @@
     <Reference Include="MiniProfiler">
       <HintPath>..\packages\MiniProfiler.2.0.2\lib\net40\MiniProfiler.dll</HintPath>
     </Reference>
+    <Reference Include="PagedList">
+      <HintPath>..\packages\PagedList.1.15.0.0\lib\net40\PagedList.dll</HintPath>
+    </Reference>
     <Reference Include="Raven.Abstractions">
       <HintPath>..\packages\RavenDB.Client.2.0.2230\lib\net40\Raven.Abstractions.dll</HintPath>
     </Reference>
@@ -52,6 +55,7 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AdvancedSessionExtensions.cs" />
+    <Compile Include="Collections\DocumentQueryPagedList.cs" />
     <Compile Include="Connection\DocumentExtensions.cs" />
     <Compile Include="DocumentIdExtensions.cs" />
     <Compile Include="Linq\PagingExtensions.cs" />

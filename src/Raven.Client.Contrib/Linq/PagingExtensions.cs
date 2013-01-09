@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using PagedList;
 
 namespace Raven.Client.Linq
 {
@@ -134,6 +135,19 @@ as it could needlessly consume a lot of resources for a very large result set.";
 
                 page++;
             }
+        }
+
+        /// <summary>
+        /// Turn a document query (Lucene) into a properly paged list.
+        /// </summary>
+        /// <typeparam name="T">The type of the collection</typeparam>
+        /// <param name="query">the document query</param>
+        /// <param name="page">the page to start at. Starts at 1.</param>
+        /// <param name="pageSize">the number of items in a page.</param>
+        /// <returns></returns>
+        public static IPagedList<T> ToPagedList<T>(this IDocumentQuery<T> query, int page = 1, int pageSize = 128)
+        {
+            return new Collections.DocumentQueryPagedList<T>(query, page, pageSize);
         }
     }
 }
