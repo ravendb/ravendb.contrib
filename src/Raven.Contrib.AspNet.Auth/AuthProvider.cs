@@ -437,7 +437,7 @@ namespace Raven.Contrib.AspNet.Auth
                 if (user == null)
                     throw new InvalidUserNameException(userName);
 
-                if (user.PasswordResetTokenExpiration >= DateTime.UtcNow)
+                if (user.PasswordResetTokenExpiration < DateTime.UtcNow)
                     throw new InvalidPasswordResetTokenException();
 
                 if (!_encoder.Verify(passwordResetToken, user.PasswordResetToken))
@@ -448,6 +448,36 @@ namespace Raven.Contrib.AspNet.Auth
                 user.PasswordResetTokenExpiration = null;
 
                 db.SaveChanges();
+            }
+        }
+
+        /// <summary>
+        /// Checks if a password reset token is still valid.
+        /// </summary>
+        /// <param name="userName">The username.</param>
+        /// <param name="passwordResetToken">The password reset token.</param>
+        /// <returns>true if the token is valid; false otherwise.</returns>
+        public bool IsResetTokenValid(string userName, string passwordResetToken)
+        {
+            if (userName == null)
+                throw new ArgumentNullException("userName");
+
+            if (passwordResetToken == null)
+                throw new ArgumentNullException("passwordResetToken");
+            
+            using (var db = _store.OpenSession())
+            {
+                var user = db.Query<Account>()
+                             .Customize(q => q.WaitForNonStaleResultsAsOfLastWrite())
+                             .SingleOrDefault(a => a.UserName == userName);
+
+                if (user == null)
+                    throw new InvalidUserNameException(userName);
+
+                if (user.PasswordResetTokenExpiration < DateTime.UtcNow)
+                    return false;
+
+                return _encoder.Verify(passwordResetToken, user.PasswordResetToken);
             }
         }
 
@@ -471,7 +501,7 @@ namespace Raven.Contrib.AspNet.Auth
 
         private string GenerateToken()
         {
-            var guid  = new Guid();
+            var guid  = Guid.NewGuid();
             var token = guid.ToString()
                             .ToLowerInvariant()
                             .Replace("-", "");

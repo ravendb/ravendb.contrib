@@ -44,6 +44,7 @@ namespace Raven.Contrib.AspNet.Auth.Interfaces
         /// Logs the current user out.
         /// </summary>
         void Logout();
+
         /// <summary>
         /// Creates a local user account.
         /// </summary>
@@ -121,5 +122,13 @@ namespace Raven.Contrib.AspNet.Auth.Interfaces
         /// <param name="passwordResetToken">The password reset token.</param>
         /// <param name="newPassword">The new password for the user.</param>
         void ResetPassword(string userName, string passwordResetToken, string newPassword);
+
+        /// <summary>
+        /// Checks if a password reset token is still valid.
+        /// </summary>
+        /// <param name="userName">The username.</param>
+        /// <param name="passwordResetToken">The password reset token.</param>
+        /// <returns>true if the token is valid; false otherwise.</returns>
+        bool IsResetTokenValid(string userName, string passwordResetToken);
     }
 }
