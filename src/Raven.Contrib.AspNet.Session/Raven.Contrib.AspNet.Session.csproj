@@ -60,6 +60,12 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Raven.Contrib.AspNet\Raven.Contrib.AspNet.csproj">
+      <Project>{2f3fd484-bcdb-4559-a29e-7c88f1eadca6}</Project>
+      <Name>Raven.Contrib.AspNet</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
