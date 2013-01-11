@@ -398,25 +398,30 @@ namespace Raven.Contrib.AspNet.Auth
                 if (user == null)
                     throw new InvalidUserNameException(userName);
 
+                var token      = GenerateToken();
                 var expiration = DateTime.UtcNow.Add(expiry);
 
-                user.PasswordResetToken           = GenerateToken();
+                user.PasswordResetToken           = _encoder.Hash(token);
                 user.PasswordResetTokenExpiration = expiration;
 
                 db.Advanced.GetMetadataFor(user)["Raven-Expiration-Date"] = new RavenJValue(expiration);
                 db.SaveChanges();
 
-                return user.PasswordResetToken;
+                return token;
             }
         }
 
         /// <summary>
         /// Resets the password for the supplied <paramref name="passwordResetToken" />
         /// </summary>
-        /// <param name="passwordResetToken">The password reset token to perform the lookup on.</param>
+        /// <param name="userName">The username.</param>
+        /// <param name="passwordResetToken">The password reset token.</param>
         /// <param name="newPassword">The new password for the user.</param>
-        public void ResetPassword(string passwordResetToken, string newPassword)
+        public void ResetPassword(string userName, string passwordResetToken, string newPassword)
         {
+            if (userName == null)
+                throw new ArgumentNullException("userName");
+
             if (passwordResetToken == null)
                 throw new ArgumentNullException("passwordResetToken");
 
@@ -427,16 +432,52 @@ namespace Raven.Contrib.AspNet.Auth
             {
                 var user = db.Query<Account>()
                              .Customize(q => q.WaitForNonStaleResultsAsOfLastWrite())
-                             .SingleOrDefault(a => a.PasswordResetToken == passwordResetToken);
+                             .SingleOrDefault(a => a.UserName == userName);
 
                 if (user == null)
-                    throw new InvalidUserNameException(passwordResetToken);
+                    throw new InvalidUserNameException(userName);
+
+                if (user.PasswordResetTokenExpiration < DateTime.UtcNow)
+                    throw new InvalidPasswordResetTokenException();
+
+                if (!_encoder.Verify(passwordResetToken, user.PasswordResetToken))
+                    throw new InvalidPasswordResetTokenException();
 
                 user.Password                     = _encoder.Hash(newPassword);
                 user.PasswordResetToken           = null;
                 user.PasswordResetTokenExpiration = null;
 
                 db.SaveChanges();
+            }
+        }
+
+        /// <summary>
+        /// Checks if a password reset token is still valid.
+        /// </summary>
+        /// <param name="userName">The username.</param>
+        /// <param name="passwordResetToken">The password reset token.</param>
+        /// <returns>true if the token is valid; false otherwise.</returns>
+        public bool IsResetTokenValid(string userName, string passwordResetToken)
+        {
+            if (userName == null)
+                throw new ArgumentNullException("userName");
+
+            if (passwordResetToken == null)
+                throw new ArgumentNullException("passwordResetToken");
+            
+            using (var db = _store.OpenSession())
+            {
+                var user = db.Query<Account>()
+                             .Customize(q => q.WaitForNonStaleResultsAsOfLastWrite())
+                             .SingleOrDefault(a => a.UserName == userName);
+
+                if (user == null)
+                    throw new InvalidUserNameException(userName);
+
+                if (user.PasswordResetTokenExpiration < DateTime.UtcNow)
+                    return false;
+
+                return _encoder.Verify(passwordResetToken, user.PasswordResetToken);
             }
         }
 
@@ -460,7 +501,7 @@ namespace Raven.Contrib.AspNet.Auth
 
         private string GenerateToken()
         {
-            var guid  = new Guid();
+            var guid  = Guid.NewGuid();
             var token = guid.ToString()
                             .ToLowerInvariant()
                             .Replace("-", "");
