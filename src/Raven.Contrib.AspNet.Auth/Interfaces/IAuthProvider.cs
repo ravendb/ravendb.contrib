@@ -117,8 +117,9 @@ namespace Raven.Contrib.AspNet.Auth.Interfaces
         /// <summary>
         /// Resets the password for the supplied <paramref name="passwordResetToken" />
         /// </summary>
-        /// <param name="passwordResetToken">The password reset token to perform the lookup on.</param>
+        /// <param name="userName">The username.</param>
+        /// <param name="passwordResetToken">The password reset token.</param>
         /// <param name="newPassword">The new password for the user.</param>
-        void ResetPassword(string passwordResetToken, string newPassword);
+        void ResetPassword(string userName, string passwordResetToken, string newPassword);
     }
 }
