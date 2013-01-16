@@ -404,7 +404,6 @@ namespace Raven.Contrib.AspNet.Auth
                 user.PasswordResetToken           = _encoder.Hash(token);
                 user.PasswordResetTokenExpiration = expiration;
 
-                db.Advanced.GetMetadataFor(user)["Raven-Expiration-Date"] = new RavenJValue(expiration);
                 db.SaveChanges();
 
                 return token;
@@ -438,6 +437,9 @@ namespace Raven.Contrib.AspNet.Auth
                     throw new InvalidUserNameException(userName);
 
                 if (user.PasswordResetTokenExpiration < DateTime.UtcNow)
+                    throw new InvalidPasswordResetTokenException();
+
+                if (user.PasswordResetToken == null)
                     throw new InvalidPasswordResetTokenException();
 
                 if (!_encoder.Verify(passwordResetToken, user.PasswordResetToken))
@@ -475,6 +477,9 @@ namespace Raven.Contrib.AspNet.Auth
                     throw new InvalidUserNameException(userName);
 
                 if (user.PasswordResetTokenExpiration < DateTime.UtcNow)
+                    return false;
+
+                if (user.PasswordResetToken == null)
                     return false;
 
                 return _encoder.Verify(passwordResetToken, user.PasswordResetToken);
