@@ -440,6 +440,9 @@ namespace Raven.Contrib.AspNet.Auth
                 if (user.PasswordResetTokenExpiration < DateTime.UtcNow)
                     throw new InvalidPasswordResetTokenException();
 
+                if (user.PasswordResetToken == null)
+                    throw new InvalidPasswordResetTokenException();
+
                 if (!_encoder.Verify(passwordResetToken, user.PasswordResetToken))
                     throw new InvalidPasswordResetTokenException();
 
@@ -475,6 +478,9 @@ namespace Raven.Contrib.AspNet.Auth
                     throw new InvalidUserNameException(userName);
 
                 if (user.PasswordResetTokenExpiration < DateTime.UtcNow)
+                    return false;
+
+                if (user.PasswordResetToken == null)
                     return false;
 
                 return _encoder.Verify(passwordResetToken, user.PasswordResetToken);
