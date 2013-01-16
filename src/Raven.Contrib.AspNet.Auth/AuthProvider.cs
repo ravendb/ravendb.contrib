@@ -404,7 +404,6 @@ namespace Raven.Contrib.AspNet.Auth
                 user.PasswordResetToken           = _encoder.Hash(token);
                 user.PasswordResetTokenExpiration = expiration;
 
-                db.Advanced.GetMetadataFor(user)["Raven-Expiration-Date"] = new RavenJValue(expiration);
                 db.SaveChanges();
 
                 return token;
