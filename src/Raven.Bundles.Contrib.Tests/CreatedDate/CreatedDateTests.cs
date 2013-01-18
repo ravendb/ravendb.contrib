@@ -46,6 +46,9 @@ namespace Raven.Bundles.Contrib.Tests.CreatedDate
         [Fact]
         public void CreatedDateBundle_Does_Not_Change_Created_Metadata_On_Update()
         {
+            // Currently failing in embedded mode because the last modified date isn't being updated.
+            // http://issues.hibernatingrhinos.com/issue/RavenDB-845
+
             using (var documentStore = NewDocumentStore())
             {
                 using (var session = documentStore.OpenSession())
@@ -65,8 +68,8 @@ namespace Raven.Bundles.Contrib.Tests.CreatedDate
                 {
                     var ball = session.Load<Ball>("balls/1");
                     var metadata = session.Advanced.GetMetadataFor(ball);
-                    var created = metadata.Value<DateTime>("Created").ToUniversalTime();
-                    var modified = metadata.Value<DateTime>("Last-Modified").ToUniversalTime();
+                    var created = metadata.Value<DateTime>("Created");
+                    var modified = metadata.Value<DateTime>("Last-Modified");
 
                     Assert.NotEqual(modified, created);
                     Assert.True(modified > created);
@@ -89,8 +92,8 @@ namespace Raven.Bundles.Contrib.Tests.CreatedDate
                 {
                     var ball = session.Load<Ball>("balls/1");
                     var metadata = session.Advanced.GetMetadataFor(ball);
-                    var created = metadata.Value<DateTime>("Created").ToUniversalTime();
-                    var modified = metadata.Value<DateTime>("Last-Modified").ToUniversalTime();
+                    var created = metadata.Value<DateTime>("Created");
+                    var modified = metadata.Value<DateTime>("Last-Modified");
 
                     Assert.Equal(modified, created);
                 }

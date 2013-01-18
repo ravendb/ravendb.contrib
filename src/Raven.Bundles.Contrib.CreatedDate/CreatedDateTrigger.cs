@@ -17,9 +17,12 @@ namespace Raven.Bundles.CreatedDate
             if (key.StartsWith("Raven/"))
                 return;
 
-            RavenJToken lastModified;
-            if (!metadata.TryGetValue("Last-Modified", out lastModified))
-                metadata.Add("Created", SystemTime.UtcNow);
+            // when there's already a Created date written, this is not the original insert
+            if (metadata.ContainsKey("Created"))
+                return;
+
+            // add the timestamp to the metadata
+            metadata.Add("Created", new RavenJValue(SystemTime.UtcNow));
         }
     }
 }
