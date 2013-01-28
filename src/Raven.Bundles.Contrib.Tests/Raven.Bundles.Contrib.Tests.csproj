@@ -68,6 +68,7 @@
     <Compile Include="ClockDocs\ClockDocsTests.cs" />
     <Compile Include="ClockDocs\ClockDocUsageTests.cs" />
     <Compile Include="CreatedDate\CreatedDateTests.cs" />
+    <Compile Include="IndexedAttachments\HighlightsWithIndexedAttachments.cs" />
     <Compile Include="IndexedAttachments\IFilterTests\DocxTests.cs" />
     <Compile Include="IndexedAttachments\IFilterTests\PdfTests.cs" />
     <Compile Include="IndexedAttachments\IFilterTests\DocTests.cs" />
