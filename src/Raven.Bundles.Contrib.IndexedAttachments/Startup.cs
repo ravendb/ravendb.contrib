@@ -36,6 +36,7 @@ select new
             
 
             index.Indexes.Add("Text", FieldIndexing.Analyzed);
+            index.Stores.Add("Text", FieldStorage.Yes);
 
             if (database.GetIndexDefinition("Raven/Attachments") == null)
                 database.PutIndex("Raven/Attachments", index);
