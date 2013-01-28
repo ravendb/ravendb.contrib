@@ -49,5 +49,24 @@
         {
             return source.Customize(x => ((IDocumentQuery<T>) x).OrderByDescending(fields));
         }
+
+        /// <summary>
+        /// Customizes the query such that any transform results function defined on the index will not be executed,
+        /// returning just the raw results instead.
+        /// </summary>
+        public static IDocumentQueryCustomization SkipTransformResults(this IDocumentQueryCustomization customization)
+        {
+            return customization.BeforeQueryExecution(x => x.SkipTransformResults = true);
+        }
+
+        /// <summary>
+        /// Customizes the query such that any transform results function defined on the index will not be executed,
+        /// returning just the raw results instead.
+        /// </summary>
+        public static TSelf SkipTransformResults<T, TSelf>(this IDocumentQueryBase<T, TSelf> query)
+            where TSelf : IDocumentQueryBase<T, TSelf>
+        {
+            return query.BeforeQueryExecution(x => x.SkipTransformResults = true);
+        }
     }
 }
