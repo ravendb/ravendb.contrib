@@ -70,10 +70,5 @@ namespace Raven.Bundles.Contrib.Tests.IndexedAttachments
                 }
             }
         }
-
-        public class FullText
-        {
-            public string Text { get; set; }
-        }
     }
 }
