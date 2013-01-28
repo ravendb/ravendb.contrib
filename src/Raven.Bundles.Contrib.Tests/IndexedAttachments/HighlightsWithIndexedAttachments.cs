@@ -61,9 +61,10 @@ namespace Raven.Bundles.Contrib.Tests.IndexedAttachments
  *  This test passes.  There are 29 instances of "congress" in the document (the us constitution).
  *  But what is strange is that when the fragment length is changed to 32 or greater, only 28 fragments come back.
  *  The line of text with the missing fragment is as follows (without quotes)
- *   
+ *    
  *  "Clause 2: The Congress shall have Power to dispose of and make all needful Rules and Regulations respecting the Territory or other Property belonging to the United States; and nothing in this Constitution shall be so construed as to Prejudice any Claims of the United States, or of any particular State. "
  *  
+ *  http://issues.hibernatingrhinos.com/issue/RavenDB-866
 */
 
                 }
