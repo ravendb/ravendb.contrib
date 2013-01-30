@@ -23,9 +23,9 @@ Please keep the following in mind:
 
 - You should use [xml summary comments](http://msdn.microsoft.com/en-us/library/vstudio/b2s063f7.aspx) on all public members, so that consumers of your code can use intellisense to easily figure out what your contribution does.  *This is especially important for extension methods.*
 
-- There are additional restrictions for the `Raven.Client.Contrib` project, as follows:
-  - No dependencies on 3rd party libraries or nuget packages.  If you require a dependency, build a separate project.  
-  - Must not require an unstable branch of RavenDB.  
+- There are additional restrictions for the `Raven.Client.Contrib` project, as follows:  
+** No dependencies on 3rd party libraries or nuget packages.  If you require a dependency, build a separate project.  
+** *Must* support the current stable release of RavenDB.  
 
 - Contributions to this repository should *augment* the official RavenDB libraries - not *subvert* them.  A pull request for code that does something Raven already handles (even if in a slightly different way), will likely be rejected.
 
