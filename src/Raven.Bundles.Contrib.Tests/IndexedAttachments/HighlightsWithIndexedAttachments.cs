@@ -20,12 +20,12 @@ namespace Raven.Bundles.Contrib.Tests.IndexedAttachments
             configuration.Catalog.Catalogs.Add(new AssemblyCatalog(typeof(PutAttachmentTrigger).Assembly));
         }
 
-        [FactIfIFilterInstalledFor(".docx")]
+        [FactIfIFilterInstalledFor(".doc")]
         public void IndexedAttachmentsBundle_Can_Query_By_Text_With_Highlighting()
         {
             using (var documentStore = NewDocumentStore())
             {
-                const string path = @"IndexedAttachments\docs\medium.docx";
+                const string path = @"IndexedAttachments\docs\medium.doc";
                 var filename = Path.GetFileName(path);
                 var key = "articles/1/" + filename;
                 using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
@@ -36,7 +36,7 @@ namespace Raven.Bundles.Contrib.Tests.IndexedAttachments
 
                 using (var session = documentStore.OpenSession())
                 {
-                    const int fragmentLength = 31;       // see note below
+                    const int fragmentLength = 34;       // see note below
                     const int maxFragmentsToReturn = 50;
 
                     FieldHighlightings highlights;
@@ -59,7 +59,7 @@ namespace Raven.Bundles.Contrib.Tests.IndexedAttachments
 
 /*
  *  This test passes.  There are 29 instances of "congress" in the document (the us constitution).
- *  But what is strange is that when the fragment length is changed to 32 or greater, only 28 fragments come back.
+ *  But what is strange is that when the fragment length is changed to 35 or greater, only 28 fragments come back.
  *  The line of text with the missing fragment is as follows (without quotes)
  *    
  *  "Clause 2: The Congress shall have Power to dispose of and make all needful Rules and Regulations respecting the Territory or other Property belonging to the United States; and nothing in this Constitution shall be so construed as to Prejudice any Claims of the United States, or of any particular State. "

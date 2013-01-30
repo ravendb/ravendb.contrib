@@ -12,9 +12,9 @@ namespace Raven.Bundles.Contrib.Tests.IndexedAttachments
 {
     public class IndexedAttachmentsTests : RavenTestBase
     {
-        private const string TestDocExt = @".docx";
-        private const string TestDocPath = @"IndexedAttachments\docs\small.docx";
-        private const string TestDocContentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+        private const string TestDocExt = @".doc";
+        private const string TestDocPath = @"IndexedAttachments\docs\small.doc";
+        private const string TestDocContentType = "application/msword";
 
         //private const string TestDocExt = @".pdf";
         //private const string TestDocPath = @"IndexedAttachments\docs\small.pdf";
