@@ -45,6 +45,24 @@ namespace Raven.Bundles.Contrib.Tests.IndexedAttachments
         }
 
         [Fact]
+        public void IndexedAttachmentsBundle_Can_Use_Filename_From_Metadata_OnReadInfo()
+        {
+            using (var documentStore = NewDocumentStore())
+            {
+                var filename = Path.GetFileName(TestDocPath);
+                const string key = "articles/1";
+                using (var stream = new FileStream(TestDocPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    var metadata = new RavenJObject { { "Raven-Attachment-Filename", filename } };
+                    documentStore.DatabaseCommands.PutAttachment(key, null, stream, metadata);
+                }
+
+                var attachment = documentStore.DatabaseCommands.GetAttachmentHeadersStartingWith(key, 0, 1).First();
+                Assert.Equal(filename, attachment.Metadata.Value<string>("Raven-Attachment-Filename"));
+            }
+        }
+
+        [Fact]
         public void IndexedAttachmentsBundle_Can_Use_Filename_From_Key_By_Convention()
         {
             using (var documentStore = NewDocumentStore())
@@ -95,6 +113,24 @@ namespace Raven.Bundles.Contrib.Tests.IndexedAttachments
 
                 var attachment = documentStore.DatabaseCommands.GetAttachment(key);
                 Assert.Equal(TestDocContentType, attachment.Metadata.Value<string>("Content-Type"));
+            }
+        }
+
+        [Fact]
+        public void IndexedAttachmentsBundle_Sets_Raven_Attachment_Content_Type_Header_OnReadInfo()
+        {
+            using (var documentStore = NewDocumentStore())
+            {
+                var filename = Path.GetFileName(TestDocPath);
+                var key = "articles/1/" + filename;
+                using (var stream = new FileStream(TestDocPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    var metadata = new RavenJObject();
+                    documentStore.DatabaseCommands.PutAttachment(key, null, stream, metadata);
+                }
+
+                var attachment = documentStore.DatabaseCommands.GetAttachmentHeadersStartingWith(key,0,1).First();
+                Assert.Equal(TestDocContentType, attachment.Metadata.Value<string>("Raven-Attachment-Content-Type"));
             }
         }
 
