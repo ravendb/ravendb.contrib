@@ -20,7 +20,7 @@ namespace Raven.Bundles.Contrib.Tests.IndexedAttachments
             configuration.Catalog.Catalogs.Add(new AssemblyCatalog(typeof(PutAttachmentTrigger).Assembly));
         }
 
-        [Fact]
+        [FactIfIFilterInstalledForAttribute(".docx")]
         public void IndexedAttachmentsBundle_Can_Query_By_Text_With_Highlighting()
         {
             using (var documentStore = NewDocumentStore())

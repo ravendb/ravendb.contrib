@@ -20,7 +20,7 @@ namespace Raven.Bundles.Contrib.Tests.IndexedAttachments.IFilterTests
 {
     public class PdfTests
     {
-        [Fact]
+        [FactIfIFilterInstalledForAttribute(".pdf")]
         public void Can_Extract_Json_From_Small_Pdf()
         {
             using (var stream = File.OpenRead(@"IndexedAttachments\docs\small.pdf"))
@@ -36,7 +36,7 @@ namespace Raven.Bundles.Contrib.Tests.IndexedAttachments.IFilterTests
             }
         }
 
-        [Fact]
+        [FactIfIFilterInstalledForAttribute(".pdf")]
         public void Can_Extract_Json_From_Medium_Pdf()
         {
             using (var stream = File.OpenRead(@"IndexedAttachments\docs\medium.pdf"))
@@ -52,7 +52,7 @@ namespace Raven.Bundles.Contrib.Tests.IndexedAttachments.IFilterTests
             }
         }
 
-        [Fact]
+        [FactIfIFilterInstalledForAttribute(".pdf")]
         public void Can_Extract_Json_From_Large_Pdf()
         {
             using (var stream = File.OpenRead(@"IndexedAttachments\docs\large.pdf"))

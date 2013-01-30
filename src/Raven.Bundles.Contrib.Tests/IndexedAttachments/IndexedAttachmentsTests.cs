@@ -12,8 +12,13 @@ namespace Raven.Bundles.Contrib.Tests.IndexedAttachments
 {
     public class IndexedAttachmentsTests : RavenTestBase
     {
-        private const string TestWordDocPath = @"IndexedAttachments\docs\small.docx";
-        private const string ContentTypeMicrosoftWord = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+        private const string TestDocExt = @".docx";
+        private const string TestDocPath = @"IndexedAttachments\docs\small.docx";
+        private const string TestDocContentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+
+        //private const string TestDocExt = @".pdf";
+        //private const string TestDocPath = @"IndexedAttachments\docs\small.pdf";
+        //private const string TestDocContentType = "application/pdf";
 
         protected override void ModifyConfiguration(RavenConfiguration configuration)
         {
@@ -26,9 +31,9 @@ namespace Raven.Bundles.Contrib.Tests.IndexedAttachments
         {
             using (var documentStore = NewDocumentStore())
             {
-                var filename = Path.GetFileName(TestWordDocPath);
+                var filename = Path.GetFileName(TestDocPath);
                 const string key = "articles/1";
-                using (var stream = new FileStream(TestWordDocPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (var stream = new FileStream(TestDocPath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     var metadata = new RavenJObject { { "Raven-Attachment-Filename", filename } };
                     documentStore.DatabaseCommands.PutAttachment(key, null, stream, metadata);
@@ -44,9 +49,9 @@ namespace Raven.Bundles.Contrib.Tests.IndexedAttachments
         {
             using (var documentStore = NewDocumentStore())
             {
-                var filename = Path.GetFileName(TestWordDocPath);
+                var filename = Path.GetFileName(TestDocPath);
                 var key = "articles/1/" + filename;
-                using (var stream = new FileStream(TestWordDocPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (var stream = new FileStream(TestDocPath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     var metadata = new RavenJObject();
                     documentStore.DatabaseCommands.PutAttachment(key, null, stream, metadata);
@@ -67,9 +72,9 @@ namespace Raven.Bundles.Contrib.Tests.IndexedAttachments
 
             using (var documentStore = NewDocumentStore())
             {
-                var filename = Path.GetFileName(TestWordDocPath);
+                var filename = Path.GetFileName(TestDocPath);
                 var key = "articles/1/" + filename;
-                using (var stream = new FileStream(TestWordDocPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (var stream = new FileStream(TestDocPath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     var metadata = new RavenJObject();
                     documentStore.DatabaseCommands.PutAttachment(key, null, stream, metadata);
@@ -85,27 +90,27 @@ namespace Raven.Bundles.Contrib.Tests.IndexedAttachments
         {
             using (var documentStore = NewDocumentStore())
             {
-                var filename = Path.GetFileName(TestWordDocPath);
+                var filename = Path.GetFileName(TestDocPath);
                 var key = "articles/1/" + filename;
-                using (var stream = new FileStream(TestWordDocPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (var stream = new FileStream(TestDocPath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     var metadata = new RavenJObject();
                     documentStore.DatabaseCommands.PutAttachment(key, null, stream, metadata);
                 }
 
                 var attachment = documentStore.DatabaseCommands.GetAttachment(key);
-                Assert.Equal(ContentTypeMicrosoftWord, attachment.Metadata.Value<string>("Content-Type"));
+                Assert.Equal(TestDocContentType, attachment.Metadata.Value<string>("Content-Type"));
             }
         }
 
-        [Fact]
+        [FactIfIFilterInstalledForAttribute(TestDocExt)]
         public void IndexedAttachmentsBundle_Creates_Text_Document()
         {
             using (var documentStore = NewDocumentStore())
             {
-                var filename = Path.GetFileName(TestWordDocPath);
+                var filename = Path.GetFileName(TestDocPath);
                 var key = "articles/1/" + filename;
-                using (var stream = new FileStream(TestWordDocPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (var stream = new FileStream(TestDocPath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     var metadata = new RavenJObject();
                     documentStore.DatabaseCommands.PutAttachment(key, null, stream, metadata);
@@ -123,9 +128,9 @@ namespace Raven.Bundles.Contrib.Tests.IndexedAttachments
         {
             using (var documentStore = NewDocumentStore())
             {
-                var filename = Path.GetFileName(TestWordDocPath);
+                var filename = Path.GetFileName(TestDocPath);
                 var key = "articles/1/" + filename;
-                using (var stream = new FileStream(TestWordDocPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (var stream = new FileStream(TestDocPath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     var metadata = new RavenJObject();
                     documentStore.DatabaseCommands.PutAttachment(key, null, stream, metadata);
@@ -152,9 +157,9 @@ namespace Raven.Bundles.Contrib.Tests.IndexedAttachments
         {
             using (var documentStore = NewDocumentStore())
             {
-                var filename = Path.GetFileName(TestWordDocPath);
+                var filename = Path.GetFileName(TestDocPath);
                 var key = "articles/1/" + filename;
-                using (var stream = new FileStream(TestWordDocPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (var stream = new FileStream(TestDocPath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     var metadata = new RavenJObject();
                     documentStore.DatabaseCommands.PutAttachment(key, null, stream, metadata);
@@ -176,16 +181,16 @@ namespace Raven.Bundles.Contrib.Tests.IndexedAttachments
             }
         }
 
-        [Fact]
+        [FactIfIFilterInstalledForAttribute(TestDocExt)]
         public void IndexedAttachmentsBundle_Can_Query_By_Text()
         {
             // This is the best part - what the whole thing is about.
 
             using (var documentStore = NewDocumentStore())
             {
-                var filename = Path.GetFileName(TestWordDocPath);
+                var filename = Path.GetFileName(TestDocPath);
                 var key = "articles/1/" + filename;
-                using (var stream = new FileStream(TestWordDocPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (var stream = new FileStream(TestDocPath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     var metadata = new RavenJObject();
                     documentStore.DatabaseCommands.PutAttachment(key, null, stream, metadata);

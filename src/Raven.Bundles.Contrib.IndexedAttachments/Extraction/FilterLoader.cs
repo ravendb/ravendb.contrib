@@ -4,9 +4,9 @@ using System.Runtime.InteropServices;
 
 namespace Raven.Bundles.IndexedAttachments.Extraction
 {
-    internal static class FilterLoader
+    public static class FilterLoader
     {
-        public static IFilter LoadForStream(Stream stream, string extension)
+        internal static IFilter LoadForStream(Stream stream, string extension)
         {
             if (stream == null)
                 throw new ArgumentNullException("stream");
@@ -69,7 +69,7 @@ namespace Raven.Bundles.IndexedAttachments.Extraction
             }
         }
 
-        public static IFilter LoadForFile(string path)
+        internal static IFilter LoadForFile(string path)
         {
             // Try to load the filter for the path given.
             IFilter filter;
@@ -91,6 +91,23 @@ namespace Raven.Bundles.IndexedAttachments.Extraction
                 return null;
 
             return filter;
+        }
+
+        public static bool FilterIsInstalledFor(string extension)
+        {
+            if (extension == null)
+                throw new ArgumentNullException("extension");
+
+            if (!extension.StartsWith("."))
+                throw new ArgumentException("The extension is invalid. Pass the extension including the leading period.");
+
+            IFilter filter;
+            int hResult = NativeMethods.LoadIFilter(extension, new IntPtr(0), out filter);
+            if (hResult != 0)
+                return false;
+
+            Marshal.ReleaseComObject(filter);
+            return true;
         }
 
         private static class NativeMethods
