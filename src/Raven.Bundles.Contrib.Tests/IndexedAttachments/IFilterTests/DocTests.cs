@@ -17,7 +17,7 @@ namespace Raven.Bundles.Contrib.Tests.IndexedAttachments.IFilterTests
 {
     public class DocTests
     {
-        [FactIfIFilterInstalledForAttribute(".doc")]
+        [FactIfIFilterInstalledFor(".doc")]
         public void Can_Extract_Json_From_Small_Doc()
         {
             using (var stream = File.OpenRead(@"IndexedAttachments\docs\small.doc"))
@@ -33,7 +33,7 @@ namespace Raven.Bundles.Contrib.Tests.IndexedAttachments.IFilterTests
             }
         }
 
-        [FactIfIFilterInstalledForAttribute(".doc")]
+        [FactIfIFilterInstalledFor(".doc")]
         public void Can_Extract_Json_From_Medium_Doc()
         {
             using (var stream = File.OpenRead(@"IndexedAttachments\docs\medium.doc"))
@@ -49,7 +49,7 @@ namespace Raven.Bundles.Contrib.Tests.IndexedAttachments.IFilterTests
             }
         }
 
-        [FactIfIFilterInstalledForAttribute(".doc")]
+        [FactIfIFilterInstalledFor(".doc")]
         public void Can_Extract_Json_From_Large_Doc()
         {
             using (var stream = File.OpenRead(@"IndexedAttachments\docs\large.doc"))
