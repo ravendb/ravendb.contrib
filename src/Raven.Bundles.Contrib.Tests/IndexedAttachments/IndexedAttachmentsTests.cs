@@ -65,11 +65,6 @@ namespace Raven.Bundles.Contrib.Tests.IndexedAttachments
         [Fact]
         public void IndexedAttachmentsBundle_Sets_Content_Disposition_Header()
         {
-            // Currently failing.
-            // The filename is supposed to be quoted, but it doesn't escape the quotes properly.
-            // http://issues.hibernatingrhinos.com/issue/RavenDB-824
-            // So for 2230 and lower, the quotes are left off intentionally.
-
             using (var documentStore = NewDocumentStore())
             {
                 var filename = Path.GetFileName(TestDocPath);

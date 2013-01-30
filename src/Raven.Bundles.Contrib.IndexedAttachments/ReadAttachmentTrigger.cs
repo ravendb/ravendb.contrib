@@ -52,8 +52,9 @@ namespace Raven.Bundles.IndexedAttachments
 
             // The filename is supposed to be quoted, but it doesn't escape the quotes properly.
             // http://issues.hibernatingrhinos.com/issue/RavenDB-824
+            // This was fixed in 2235.  For prior versions, don't send the quotes.
 
-            if (Utils.RavenVersion <= Version.Parse("2.0.2230.0")) // leave them off for 2230 and lower
+            if (Utils.RavenVersion < Version.Parse("2.0.2235.0"))
                 metadata["Content-Disposition"] = string.Format("attachment; filename={0}", filename);
             else
                 metadata["Content-Disposition"] = string.Format("attachment; filename=\"{0}\"", filename);
