@@ -1,6 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using Raven.Imports.Newtonsoft.Json;
 using Raven.Json.Linq;
 
 namespace Raven.Bundles.IndexedAttachments.Extraction
@@ -56,7 +59,7 @@ namespace Raven.Bundles.IndexedAttachments.Extraction
                             if (buffer.Length > 0)
                             {
                                 // Make sure we have no unwritten data first.
-                                textWriter.WriteValue(buffer.ToString());
+                                textWriter.WriteLines(buffer.ToString());
                                 buffer.Clear();
                             }
 
@@ -118,7 +121,8 @@ namespace Raven.Bundles.IndexedAttachments.Extraction
                     switch (statChunk.breakType)
                     {
                         case CHUNK_BREAKTYPE.CHUNK_EOW:
-                            buffer.Append(' ');
+                            if (buffer.Length > 0 && !char.IsWhiteSpace(buffer[buffer.Length - 1]))
+                                buffer.Append(' ');
                             break;
 
                         case CHUNK_BREAKTYPE.CHUNK_EOC:
@@ -128,7 +132,8 @@ namespace Raven.Bundles.IndexedAttachments.Extraction
                             // This will keep any one string from getting too big.
                             if (buffer.Length > 0)
                             {
-                                textWriter.WriteValue(buffer.ToString());
+                                textWriter.WriteLines(buffer.ToString());
+                                
                                 buffer.Clear();
                             }
                             break;
@@ -156,6 +161,13 @@ namespace Raven.Bundles.IndexedAttachments.Extraction
 
                 }
             }
+        }
+
+        private static void WriteLines(this JsonWriter writer, string text)
+        {
+            var lines = text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var s in lines.Select(x => x.Trim()).Where(x => x != string.Empty))
+                writer.WriteValue(s);
         }
     }
 }
