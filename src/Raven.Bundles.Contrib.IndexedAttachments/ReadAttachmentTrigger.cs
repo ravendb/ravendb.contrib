@@ -8,6 +8,7 @@ using Raven.Json.Linq;
 
 namespace Raven.Bundles.IndexedAttachments
 {
+    [InheritedExport(typeof(AbstractAttachmentReadTrigger))]
     [ExportMetadata("Bundle", "IndexedAttachments")]
     public class ReadAttachmentTrigger : AbstractAttachmentReadTrigger
     {

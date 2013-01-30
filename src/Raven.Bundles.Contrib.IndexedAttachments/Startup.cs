@@ -5,6 +5,7 @@ using Raven.Database.Plugins;
 
 namespace Raven.Bundles.IndexedAttachments
 {
+    [InheritedExport(typeof(IStartupTask))]
     [ExportMetadata("Bundle", "IndexedAttachments")]
     public class Startup : IStartupTask
     {
