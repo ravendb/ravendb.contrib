@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Raven.Abstractions.Data;
 using Raven.Bundles.IndexedAttachments;
 using Raven.Client;
 using Raven.Client.Linq;
@@ -18,6 +19,7 @@ namespace Raven.Bundles.Contrib.Tests.IndexedAttachments
         {
             // Wire up the bundle to the embedded database
             configuration.Catalog.Catalogs.Add(new AssemblyCatalog(typeof(PutAttachmentTrigger).Assembly));
+            configuration.Settings[Constants.ActiveBundles] = "IndexedAttachments";
         }
 
         [FactIfIFilterInstalledFor(".doc")]
