@@ -38,9 +38,9 @@ select new
 
             index.Indexes.Add("Text", FieldIndexing.Analyzed);
             index.Stores.Add("Text", FieldStorage.Yes);
+            index.TermVectors.Add("Text", FieldTermVector.WithPositionsAndOffsets);
 
-            if (database.GetIndexDefinition("Raven/Attachments") == null)
-                database.PutIndex("Raven/Attachments", index);
+            database.PutIndex("Raven/Attachments", index);
         }
     }
 }
