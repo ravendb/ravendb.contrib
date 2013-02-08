@@ -13,7 +13,7 @@ namespace Raven.Client
         public static bool DatabaseExists(this IDocumentStore documentStore, string databaseName)
         {
             var key = "Raven/Databases/" + databaseName;
-            return documentStore.DatabaseCommands.ForDefaultDatabase().DocumentExists(key);
+            return documentStore.DatabaseCommands.ForSystemDatabase().DocumentExists(key);
         }
     }
 }
