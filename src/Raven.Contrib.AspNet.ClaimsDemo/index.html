@@ -1,0 +1,20 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+    <form action="/api/login" method="POST">
+        Username: <input type="text" id="username" name="username" value="root"/>
+        Password: <input type="text" id="password" name="password" value="toor"/>
+        <input type="submit" value="Login"/>
+    </form>
+    
+    <ul>
+        <li><a href="/api/values/anonymous">anonymous</a></li>
+        <li><a href="/api/values/authenticated">any authenticated user</a></li>
+        <li><a href="/api/values/adminsOnly">admins only</a></li>
+        <li><a href="/api/values/enforced">manually enforced permission</a></li>
+    </ul>
+</body>
+</html>
