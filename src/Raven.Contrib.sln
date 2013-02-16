@@ -56,6 +56,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Contrib.AspNet.Demo",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Bundles.Contrib.IndexedAttachments", "Raven.Bundles.Contrib.IndexedAttachments\Raven.Bundles.Contrib.IndexedAttachments.csproj", "{3EEDDADC-CD09-4ED4-9D47-FBDD368A7240}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Contrib.AspNet.ClaimsDemo", "Raven.Contrib.AspNet.ClaimsDemo\Raven.Contrib.AspNet.ClaimsDemo.csproj", "{C5994C37-CEB8-45FF-8FA0-EB7D18630BAC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -118,6 +120,10 @@ Global
 		{3EEDDADC-CD09-4ED4-9D47-FBDD368A7240}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3EEDDADC-CD09-4ED4-9D47-FBDD368A7240}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3EEDDADC-CD09-4ED4-9D47-FBDD368A7240}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5994C37-CEB8-45FF-8FA0-EB7D18630BAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5994C37-CEB8-45FF-8FA0-EB7D18630BAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5994C37-CEB8-45FF-8FA0-EB7D18630BAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5994C37-CEB8-45FF-8FA0-EB7D18630BAC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -137,5 +143,6 @@ Global
 		{DDD21510-D927-4D11-B6AC-2421C8DFA0F5} = {6383D5BE-389C-41A5-9056-7558D9B55EE5}
 		{2F3FD484-BCDB-4559-A29E-7C88F1EADCA6} = {6383D5BE-389C-41A5-9056-7558D9B55EE5}
 		{AED33EA2-9B20-4E5F-9F24-705AC56E4ACD} = {4EA381D3-EED0-43FF-8ADB-7A56204132E4}
+		{C5994C37-CEB8-45FF-8FA0-EB7D18630BAC} = {4EA381D3-EED0-43FF-8ADB-7A56204132E4}
 	EndGlobalSection
 EndGlobal
