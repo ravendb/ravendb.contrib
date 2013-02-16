@@ -124,6 +124,19 @@ namespace Raven.Contrib.AspNet.Session
                 _store.Initialize();
             }
 
+            using (var session = _store.OpenSession())
+            {
+                var now     = DateTime.UtcNow;
+                var expired = session.Query<Session>()
+                                     .Where(s => s.Expires < now)
+                                     .ToList();
+
+                foreach (var s in expired)
+                    session.Delete(s);
+
+                session.SaveChanges();
+            }
+
             var sessionConfig = (SessionStateSection) WebConfigurationManager.GetSection("system.web/sessionState");
             _timeout          = (int) sessionConfig.Timeout.TotalMinutes;
         }
