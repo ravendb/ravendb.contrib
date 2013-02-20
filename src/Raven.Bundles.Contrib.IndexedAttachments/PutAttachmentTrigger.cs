@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.IO;
+using Raven.Abstractions.Data;
 using Raven.Bundles.IndexedAttachments.Extraction;
 using Raven.Database.Plugins;
 using Raven.Json.Linq;
@@ -24,7 +25,7 @@ namespace Raven.Bundles.IndexedAttachments
                 metadata["Raven-Attachment-Filename"] = filename;
         }
 
-        public override void AfterCommit(string key, Stream data, RavenJObject metadata, Guid etag)
+        public override void AfterCommit(string key, Stream data, RavenJObject metadata, Etag etag)
         {
             // Make sure we have a filename
             var filename = metadata.Value<string>("Raven-Attachment-Filename");

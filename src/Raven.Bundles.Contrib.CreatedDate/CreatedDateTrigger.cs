@@ -11,7 +11,7 @@ namespace Raven.Bundles.CreatedDate
     /// </summary>
     public class CreatedDateTrigger : AbstractPutTrigger
     {
-        public override void AfterPut(string key, RavenJObject document, RavenJObject metadata, Guid etag, TransactionInformation transactionInformation)
+        public override void AfterPut(string key, RavenJObject document, RavenJObject metadata, Etag etag, TransactionInformation transactionInformation)
         {
             // leave raven system docs alone
             if (key.StartsWith("Raven/"))

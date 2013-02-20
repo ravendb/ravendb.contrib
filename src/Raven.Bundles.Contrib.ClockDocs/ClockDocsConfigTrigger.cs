@@ -1,5 +1,5 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using Raven.Abstractions.Data;
 using Raven.Abstractions.Extensions;
 using Raven.Database.Plugins;
 using Raven.Json.Linq;
@@ -8,7 +8,7 @@ namespace Raven.Bundles.ClockDocs
 {
     public class ClockDocsConfigTrigger : AbstractPutTrigger
     {
-        public override void AfterCommit(string key, RavenJObject document, RavenJObject metadata, Guid etag)
+        public override void AfterCommit(string key, RavenJObject document, RavenJObject metadata, Etag etag)
         {
             // When a new clocks config doc is written, reconfigure the active timers
 

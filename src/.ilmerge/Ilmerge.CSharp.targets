@@ -4,7 +4,7 @@
       <Output TaskParameter="Include" ItemName="IlmergeAssemblies" />
     </CreateItem>
     <Message Text="MERGING: @(IlmergeAssemblies->'%(Filename)')" Importance="High" />
-    <Exec Command="&quot;$(SolutionDir).ilmerge\ilmerge.exe&quot; /v4 /out:@(MainAssembly) &quot;@(IntermediateAssembly)&quot; @(IlmergeAssemblies->'&quot;%(FullPath)&quot;', ' ')" />
+    <Exec Command="&quot;$(SolutionDir).ilmerge\ilmerge.exe&quot; /targetplatform:v4,&quot;$(ProgramFiles)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\Profile\Client&quot; /out:@(MainAssembly) &quot;@(IntermediateAssembly)&quot; @(IlmergeAssemblies->'&quot;%(FullPath)&quot;', ' ')" />
   </Target>
   <Target Name="_CopyFilesMarkedCopyLocal" />
 </Project>
