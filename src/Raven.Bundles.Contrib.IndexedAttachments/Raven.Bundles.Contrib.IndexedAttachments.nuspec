@@ -12,7 +12,7 @@
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <tags>nosql ravendb raven document database client bundles attachments fulltext full text ifilter ifilters filter doc docx pdf word excel content</tags>
     <dependencies>
-      <dependency id="RavenDB.Database" version="2.0.2261" />
+      <dependency id="RavenDB.Database" version="[2.0.2261,2.0.2500)" />
     </dependencies>
     <iconUrl>http://static.ravendb.net/logo-for-nuget.png</iconUrl>
   </metadata>
