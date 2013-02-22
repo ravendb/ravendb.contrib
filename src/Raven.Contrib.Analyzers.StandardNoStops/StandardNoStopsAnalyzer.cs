@@ -3,7 +3,7 @@ using System.IO;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Util;
 
-namespace Raven.Contrib.Analyzers.StandardNoStops
+namespace Raven.Database.Indexing
 {
 	/// <summary>
 	/// This implements the Lucene StandardAnalyzer, however no Stop Words.
