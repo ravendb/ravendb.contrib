@@ -52,6 +52,7 @@
     </Compile>
     <Compile Include="AdvancedSessionExtensions.cs" />
     <Compile Include="Connection\DocumentExtensions.cs" />
+    <Compile Include="ServerStatusExtensions.cs" />
     <Compile Include="DocumentIdExtensions.cs" />
     <Compile Include="Linq\PagingExtensions.cs" />
     <Compile Include="Listeners\CreatedDateListener.cs" />
