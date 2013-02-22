@@ -5,6 +5,11 @@ using Lucene.Net.Util;
 
 namespace Raven.Contrib.Analyzers.StandardNoStops
 {
+	/// <summary>
+	/// This implements the Lucene StandardAnalyzer, however no Stop Words.
+	/// Use this in cases where you need all the functionality of the StandardAnaylzer
+	/// however you do not want anything disregarded (stop words) in indexing.
+	/// </summary>
 	public class StandardNoStopsAnalyzer : StandardAnalyzer
 	{
 		public static readonly ISet<string> StopWordsSet;
