@@ -20,7 +20,7 @@ namespace Raven.Contrib.AspNet.Demo.Extensions
             string encodedValue = Uri.EscapeDataString(value);
             string queryString  = String.Format("{0}={1}", encodedKey, encodedValue);
 
-            builder.Query += String.IsNullOrEmpty(builder.Query) ? queryString : "&" + queryString;
+            builder.Query = String.IsNullOrEmpty(builder.Query) ? queryString : builder.Query.Substring(1) + "&" + queryString;
 
             return builder.Uri;
         }
