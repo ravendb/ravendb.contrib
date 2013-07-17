@@ -71,42 +71,9 @@
     <Compile Include="ClockDocs\ClockDocsTests.cs" />
     <Compile Include="ClockDocs\ClockDocUsageTests.cs" />
     <Compile Include="CreatedDate\CreatedDateTests.cs" />
-    <Compile Include="IndexedAttachments\FactIfIFilterInstalledForAttribute.cs" />
-    <Compile Include="IndexedAttachments\HighlightsWithIndexedAttachments.cs" />
-    <Compile Include="IndexedAttachments\IFilterTests\DocxTests.cs" />
-    <Compile Include="IndexedAttachments\IFilterTests\PdfTests.cs" />
-    <Compile Include="IndexedAttachments\IFilterTests\DocTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="IndexedAttachments\IndexedAttachmentsTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="IndexedAttachments\docs\large.doc">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="IndexedAttachments\docs\large.docx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="IndexedAttachments\docs\large.pdf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="IndexedAttachments\docs\medium.docx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="IndexedAttachments\docs\medium.pdf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="IndexedAttachments\docs\small.docx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="IndexedAttachments\docs\small.pdf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="IndexedAttachments\docs\medium.doc">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="IndexedAttachments\docs\small.doc">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -117,10 +84,6 @@
     <ProjectReference Include="..\Raven.Bundles.Contrib.CreatedDate\Raven.Bundles.Contrib.CreatedDate.csproj">
       <Project>{0899bddd-e10d-4140-b27d-48356dad8e04}</Project>
       <Name>Raven.Bundles.Contrib.CreatedDate</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Raven.Bundles.Contrib.IndexedAttachments\Raven.Bundles.Contrib.IndexedAttachments.csproj">
-      <Project>{3EEDDADC-CD09-4ED4-9D47-FBDD368A7240}</Project>
-      <Name>Raven.Bundles.Contrib.IndexedAttachments</Name>
     </ProjectReference>
     <ProjectReference Include="..\Raven.Client.Bundles.Contrib.ClockDocs\Raven.Client.Bundles.Contrib.ClockDocs.csproj">
       <Project>{1350de5e-18c5-44b7-bee2-61d86c76cbe1}</Project>
