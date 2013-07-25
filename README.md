@@ -9,6 +9,16 @@ This project is maintained and supported by the RavenDB community, not by Hibern
 
 The project is relatively **stable**.
 
+## Installation
+
+There are multiple projects in this repository, but the primary one is Raven.Client.Contrib.  It can be installed via NuGet:
+
+    PM> Install-Package RavenDB.Client.Contrib
+    
+The NuGet feed can be found [here](https://www.nuget.org/packages/RavenDB.Client.Contrib/)  
+
+Other projects may also have NuGet packages, or may require manual compilation.
+
 ## Contribution Guidelines
 
 To contribute to this project, [fork](https://help.github.com/articles/fork-a-repo) the main repository [from here](https://github.com/ravendb/ravendb.contrib) and make your changes locally.  Then submit a [pull request](https://help.github.com/articles/using-pull-requests) with your changes.  Be sure to describe what your contribution does and what value it adds to Raven.
