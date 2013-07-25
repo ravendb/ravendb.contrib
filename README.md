@@ -7,9 +7,7 @@ This project is maintained and supported by the RavenDB community, not by Hibern
 
 ## Status
 
-We're just getting things started.  Various people are still adding their contributions.
-
-While the code here is probably good, it is currently **unstable**, and various things may change.  If you see something you like, you should probably copy it into your own project, or build the project yourself from source code.  It is too early for a release of any kind, or for a NuGet package.
+The project is relatively **stable**.
 
 ## Contribution Guidelines
 
@@ -17,9 +15,15 @@ To contribute to this project, [fork](https://help.github.com/articles/fork-a-re
 
 Please keep the following in mind:
 
-- We are targeting .Net 4.0, Visual Studio 2012, and RavenDB 2.0.
+- We are using Visual Studio 2012.
 
-- Whenever possible, libraries should support the current stable release of RavenDB.
+- The *master* branch targets RavenDB 2.5, and whenever possible targets *both* .Net 4.0 and 4.5 via linked projects.
+
+- The *2.0* branch is currently maintained for RavenDB 2.0 under .Net 4.0.  If an item is compatibile with RavenDB 2.0, it should be added to both branches.  Of course, code that is not applicable to RavenDB 2.0 will only exist in the *master* branch.
+
+- We are not supporting RavenDB 1.0 at all.
+
+- Whenever possible, libraries should support the current stable release of RavenDB.  However, the minimal supported stable version of RavenDB should be referenced unless their is a breaking change.
 
 - You should use [xml summary comments](http://msdn.microsoft.com/en-us/library/vstudio/b2s063f7.aspx) on all public members, so that consumers of your code can use intellisense to easily figure out what your contribution does.  *This is especially important for extension methods.*
 
@@ -28,6 +32,8 @@ Please keep the following in mind:
 ** *Must* support the current stable release of RavenDB.  
 
 - Contributions to this repository should *augment* the official RavenDB libraries - not *subvert* them.  A pull request for code that does something Raven already handles (even if in a slightly different way), will likely be rejected.
+
+- Contributions should be small, discrete chunks of code that can operate independently from each other.  If you have a medium to large sized bundle, extension, or demo, then it should probably be hosted in your own repository.
 
 - [Hibernating Rhinos](http://hibernatingrhinos.com) retains the right to veto anything we do here.  Raven is their baby.  Let's not make it ugly.  Try to keep their design principles in mind, such as "Safe by Default".
 
