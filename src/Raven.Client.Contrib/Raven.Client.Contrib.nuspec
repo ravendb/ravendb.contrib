@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>RavenDB.Client.Contrib</id>
+    <version>$version$</version>
+    <title>Contributed addons for the RavenDB Client Libraray</title>
+    <authors>$author$</authors>
+    <description>$description$</description>
+    <language>en-US</language>
+    <licenseUrl>https://github.com/ravendb/ravendb.contrib/blob/master/LICENSE.txt</licenseUrl>
+    <projectUrl>https://github.com/ravendb/ravendb.contrib</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <tags>nosql ravendb raven document database client contrib extensions</tags>
+    <dependencies>
+      <dependency id="RavenDB.Client" version="[2.0.2261,2.0.2500)" />
+    </dependencies>
+    <iconUrl>http://static.ravendb.net/logo-for-nuget.png</iconUrl>
+  </metadata>
+  <files>
+    <file src="bin\debug\Raven.Client.Contrib.pdb" target="lib\net40-Client"/>
+  </files>
+</package>
