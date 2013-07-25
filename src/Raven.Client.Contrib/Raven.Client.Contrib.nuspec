@@ -3,7 +3,7 @@
   <metadata>
     <id>RavenDB.Client.Contrib</id>
     <version>$version$</version>
-    <title>Contributed addons for the RavenDB Client Libraray</title>
+    <title>Contributed addons for the RavenDB Client Library</title>
     <authors>$author$</authors>
     <description>$description$</description>
     <language>en-US</language>
