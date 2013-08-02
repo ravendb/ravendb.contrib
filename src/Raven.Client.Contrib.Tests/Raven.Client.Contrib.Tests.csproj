@@ -68,6 +68,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Linq\PagingExtensionTests.cs" />
+    <Compile Include="ServerStatusExtensionsTests.cs" />
     <Compile Include="TestEntities\Ball.cs" />
     <Compile Include="ToDo.cs" />
   </ItemGroup>
