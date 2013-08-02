@@ -60,6 +60,7 @@
     <Compile Include="DocumentIdExtensions.cs" />
     <Compile Include="Linq\PagingExtensions.cs" />
     <Compile Include="Listeners\CreatedDateListener.cs" />
+    <Compile Include="ServerStatusExtensions.cs" />
     <Compile Include="TenantDatabaseExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Linq\QueryExtensions.cs" />

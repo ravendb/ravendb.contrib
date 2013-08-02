@@ -67,6 +67,9 @@
     <Compile Include="..\Raven.Client.Contrib\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="..\Raven.Client.Contrib\ServerStatusExtensions.cs">
+      <Link>ServerStatusExtensions.cs</Link>
+    </Compile>
     <Compile Include="..\Raven.Client.Contrib\TenantDatabaseExtensions.cs">
       <Link>TenantDatabaseExtensions.cs</Link>
     </Compile>
