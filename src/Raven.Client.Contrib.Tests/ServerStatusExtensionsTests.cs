@@ -10,7 +10,7 @@ namespace Raven.Client.Contrib.Tests
         [Fact]
         public void Can_Get_Server_Build_Number()
         {
-            using (var store = NewDocumentStore())
+            using (var store = NewRemoteDocumentStore())
             {
                 BuildNumber buildNumber;
                 var ok = store.TryGetServerVersion(out buildNumber);
@@ -23,7 +23,7 @@ namespace Raven.Client.Contrib.Tests
         [Fact]
         public void Can_Get_Server_Online_Status()
         {
-            using (var store = NewDocumentStore())
+            using (var store = NewRemoteDocumentStore())
             {
                 Assert.True(store.IsServerOnline());
             }
