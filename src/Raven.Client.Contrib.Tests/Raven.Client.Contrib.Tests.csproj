@@ -49,6 +49,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\RavenDB.Database.2.0.2261\lib\net40\Raven.Database.dll</HintPath>
     </Reference>
+    <Reference Include="Raven.Server">
+      <HintPath>..\packages\RavenDB.Server.2.0.2261\tools\Raven.Server.exe</HintPath>
+    </Reference>
     <Reference Include="Raven.Tests.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=37f41c7f99471593, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\RavenDB.Tests.Helpers.2.0.2261\lib\net40\Raven.Tests.Helpers.dll</HintPath>
